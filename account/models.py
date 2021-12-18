@@ -1,6 +1,5 @@
 from datetime import date
-from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
-                                        PermissionsMixin)
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,PermissionsMixin)
 from django.core.mail import send_mail,EmailMessage
 from django.db import models
 from django.db.models import base
@@ -9,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 
 GENDER=[('M','male'),('F','female'),]
+
 class CustomAccountManager(BaseUserManager):
 
     def create_superuser(self, email, user_name, password, **other_fields):
@@ -44,8 +44,8 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     phone_number = models.CharField(max_length=15, blank=True)
     user_name = models.CharField(max_length=150, unique=True)
-    first_name = models.CharField(max_length=150, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
+    first_name = models.CharField(max_length=150, blank=False)
+    last_name = models.CharField(max_length=150, blank=False)
     gender = models.CharField(max_length=1, choices=GENDER,default='M')
     about = models.TextField(_(
         'about'), max_length=500, blank=True)
