@@ -1,0 +1,103 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block stylesheet %}{% static 'store/css/store.css' %}{% endblock %}
+{% block title %}
+{% if product %}{{ product.title }}{% else %}Product{% endif %}
+{% endblock %}
+{% block content %}
+
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="bg-white">
+                    <div class="alert alert-success" role="alert">
+                    {% for msg in messages %}
+                    {{msg}}
+                    
+                    {% endfor%}
+                    </div>
+
+        <div class="row m-0 p-3">
+            <div class="col-lg-4 left-side-product-box pb-3">
+                {% for image in product.product_image.all %}
+                {% if image.is_feature %}
+                <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image" src="{{ image.image.url }}" alt="{{ image.image.alt_text }}">
+                {% else %}
+                <img class="img-fluid d-block-inline pt-3" width="100px" alt="Responsive image" src="{{ image.image.url }}" alt="{{ image.image.alt_text }}">
+                {% endif %}
+                {% endfor %}
+
+            </div>
+
+            <div class="col-lg-8">
+                <div class="right-side-pro-detail border p-3 m-0">
+                    <div class="row">
+                            <div class="col-8">
+                                <p class="m-0 p-0">{{product.title}}</p>
+                            </div>
+                            <div class="col-4">
+
+                                <button data-pid={{product.id}} data-url="{% url "account:users_wishlist" %}" class="btn btn-primary fw500" role="button" aria-disabled="true" id="add_to_wishlist"><i class="fas fa-heart"></i> Add to Wish List</button>
+                                {% csrf_token %}
+                            </div>
+                        </div>
+                    <div class="row">
+
+
+
+                        <div class="col-lg-12">
+                            <p class="m-0 p-0 price-pro">{{product.regular_price}} $</p>
+                            <hr class="p-0 m-0">
+                        </div>
+<!--                        <div class="col-lg-12 pt-2">-->
+<!--                            <h5>Product Detail</h5>-->
+<!--                            <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod-->
+<!--                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,-->
+<!--                                quis nostrud exercitation ullamco laboris.</span>-->
+<!--                            <hr class="m-0 pt-2 mt-2">-->
+<!--                        </div>-->   
+                        <div class="col-lg-12 p-3">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a aria-controls="home" aria-selected="true" class="nav-link active"
+                                       data-toggle="tab" href="#home"
+                                       id="home-tab" role="tab">Specifications</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a aria-controls="profile" aria-selected="false" class="nav-link" data-toggle="tab"
+                                       href="#profile"
+                                       id="profile-tab" role="tab">Description</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a aria-controls="contact" aria-selected="false" class="nav-link" data-toggle="tab"
+                                       href="#contact"
+                                       id="contact-tab" role="tab">Reviews</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div aria-labelledby="home-tab" class="tab-pane fade show active" id="home"
+                                     role="tabpanel">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Cras justo odio</li>
+                                        <li class="list-group-item">Dapibus ac facilisis in</li>
+                                        <li class="list-group-item">Morbi leo risus</li>
+                                        <li class="list-group-item">Porta ac consectetur ac</li>
+                                        <li class="list-group-item">{{product}}</li>
+                                    </ul>
+                                </div>
+                                <div aria-labelledby="profile-tab" class="tab-pane fade" id="profile" role="tabpanel">
+                                    <div class = "font-sm p-3">{{product.description}}</div>
+                                </div>
+                                <div aria-labelledby="contact-tab" class="tab-pane fade" id="contact" role="tabpanel">
+                                    Reviews are disabled in the current time
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

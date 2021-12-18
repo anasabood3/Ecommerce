@@ -1,0 +1,177 @@
+{% extends "../sub_base.html" %}
+{% load static %}
+{% block sub_content %}
+
+
+
+    <div class="card">
+
+        <div class="col-lg-12 " data-select2-id="6">
+            <!-- Card -->
+            <div class="card mb-3 mb-lg-5">
+                <div class="card-header">
+                    <h5 class="card-title">Basic info</h5>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body" data-select2-id="4">
+                    {% if user_form.errors %}
+                    <p>Please correct the following errors:</p>
+                    {% for field in user_form %}
+                    {% if field.errors %}
+                    <div class="alert alert-primary" role="alert">
+                        {{ field.label }}: {{ field.errors|striptags }}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {%if messages%}
+                    <div class="alert alert-success" role="alert">
+                    {% for msg in messages %}
+                    {{msg}}
+                    
+                    {% endfor%}
+                    </div>
+                    {%endif%}
+                    <form method="post" data-id="{% url 'account:edit_details' %}" id="UserEditForm" enctype="multipart/form-data" novalidate>
+                        {%csrf_token%}
+                      <!-- Form Group -->
+                        <div class="row form-group">
+                            <label class="col-sm-3 col-form-label input-label my-auto">Profile photo</label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <label class="avatar avatar-xl avatar-circle mr-4" for="avatarUploader">
+                                        <img alt="Image Description" class="avatar-img rounded-circle" height="75" width="75"
+                                             id="avatarImg"
+                                             src="{{user.image.url}}">
+                                    </label>
+                                    <div class="my-4 ">{{user_form.image}}</div>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="col-sm-9">
+                                <div class="media align-items-center">
+                                    
+
+                                    {% comment %} <div class="media-body">
+                                        <div class="btn btn-sm btn-primary file-attachment-btn mb-2 mb-sm-0 mr-2">Upload
+                                            Photo
+                                            
+                                        </div>
+
+                                        <a class="btn btn-sm btn-white mb-2 mb-sm-0" href="javascript:;">Delete</a>
+                                    </div> {% endcomment %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Form Group -->
+
+                        <!-- Form Group -->
+                        <div class="row form-group">
+                            <label class="col-sm-3 col-form-label input-label" for="firstNameLabel">Full name </label>
+
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    {{ user_form.first_name }}
+                                    {{ user_form.last_name }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Form Group -->
+
+                        <!-- Form Group -->
+                        <div class="row form-group">
+                            <label class="col-sm-3 col-form-label input-label" for="emailLabel">Email</label>
+
+                            <div class="col-sm-9">
+                                {{ user_form.email }}
+                            </div>
+                        </div>
+                        <!-- End Form Group
+                        <!-- Form Group -->
+                        <div class="row form-group">
+                            <label class="col-sm-3 col-form-label input-label" for="emailLabel">Username</label>
+
+                            <div class="col-sm-9">
+                                {{ user_form.user_name }}
+                            </div>
+                        </div>
+                        <!-- End Form Group -->
+
+                        <!-- Form Group -->
+                        <div class="js-add-field row form-group">
+                            <label class="col-sm-3 col-form-label input-label" for="phoneLabel">Phone Number<span
+                                    class="input-label-secondary"></span></label>
+
+                            <div class="col-sm-9">
+                                <div class="input-group align-items-center">
+                                    {{user_form.phone_number}}
+
+                                </div>
+
+                                <!-- Container For Input Field -->
+                                <div id="addPhoneFieldContainer"></div>
+
+
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label class="col-sm-3 col-form-label input-label" for="emailLabel">Date Of Birth</label>
+
+                            <div class="col-sm-9">
+                                {{user_form.date_of_birth}}
+                            </div>
+                        </div>
+                        <!-- End Form Group -->
+                        <!-- Form Group -->
+                        <div class="row form-group">
+                            <label class="col-sm-3 col-form-label input-label" for="firstNameLabel">Location</label>
+
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    {{user_form.country}}
+                                    {{user_form.town_city}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label class="col-sm-3 col-form-label input-label" for="emailLabel">Gender</label>
+
+                            <div class="col-sm-9">
+                                {{user_form.gender}}
+                            </div>
+                        </div>
+                        <!-- End Form Group -->
+                        
+                        
+                        <!-- Form Group -->
+                        <div class="row form-group">
+                            <label class="col-sm-3 col-form-label input-label">About</label>
+
+                            <div class="col-sm-9">
+                                <!-- Quill -->
+                                {{user_form.about}}
+                            </div>
+                            <!-- End Form Group -->
+
+                            <!-- Form Group -->
+
+                            <!-- End Form Group -->
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="card-footer d-flex justify-content-end">
+                            <button class="btn btn-primary" type="submit" id="saveChanges">Save Changes</button>
+                        </div>
+                        <!-- End Footer -->
+                    </form>
+                </div>
+                <!-- End Body -->
+
+
+
+
+
+
+            {% endblock %}

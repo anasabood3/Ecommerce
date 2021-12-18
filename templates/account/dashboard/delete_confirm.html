@@ -1,0 +1,21 @@
+{% extends "../sub_base.html" %}
+{% block title %}Delete Account Confirmation{% endblock %}
+{% block content %}
+
+<div class="container">
+
+    <div class="p-3">
+        <h3 class="mb-4">Delete Account</h3>
+        <p>You have now deleted your account</p>
+        {% if messages %}
+        <div class="alert alert-info" role="alert">
+            {% for msg in messages %}
+            {{msg}}
+
+            {% endfor%}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
