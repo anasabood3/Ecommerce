@@ -33,7 +33,7 @@ urlpatterns = [
          name='password_reset_complete'),
     # Password Change
     path('profile/edit/password_change/',auth_views.PasswordChangeView.as_view(template_name='account/dashboard/password_change.html',success_url='password_change_completed',form_class=PwdChangeForm),name='pwdchange'),
-    path('profile/edit/password_change/password_change_completed/',auth_views.PasswordChangeDoneView.as_view(template_name='account/dashboard/user_info.html'),name='pwdchange_done'),
+    path('profile/edit/password_change/password_change_completed/',auth_views.PasswordChangeDoneView.as_view(template_name='account/dashboard/dashboard.html'),name='pwdchange_done'),
     #Dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
     path('profile/edit/', views.edit_details, name='edit_details'),
