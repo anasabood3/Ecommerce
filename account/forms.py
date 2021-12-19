@@ -105,7 +105,7 @@ class UserEditForm(forms.ModelForm):
             attrs={'class': 'form-control', 'placeholder': 'Home City', 'id': 'form-city'}))
 
     about = forms.CharField(
-        label='About', min_length=4, max_length=30, widget=forms.Textarea(
+        label='About', min_length=4, max_length=500, widget=forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': 'About yourself ...', 'id': 'form-about'}))
     gender = forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}),choices=GENDER)
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control'}))

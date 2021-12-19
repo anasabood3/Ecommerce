@@ -104,7 +104,6 @@ def account_activate(request, uidb64, token):
 def edit_details(request):
     if request.method == "POST":
         user_form = UserEditForm(request.POST,request.FILES,instance=request.user)
-        print(request.FILES)
         if user_form.is_valid():
             user_form.save()
             messages.success(request,"Changes were saved successfully")
