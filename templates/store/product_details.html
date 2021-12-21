@@ -55,16 +55,14 @@
         </div>
     </div>
 </div>
+
 <section class="py-5">
     <div class="container">
-        {%if messages%}
-        <div class="alert alert-success" role="alert">
-            {% for msg in messages %}
-            {{msg}}
 
-            {% endfor%}
+        <div  id="wishlist_alerts" class="alert alert-info" role="alert" hidden>
+            
         </div>
-        {%endif%}
+
         <div class="row mb-5">
             <div class="col-lg-6">
 
@@ -105,9 +103,9 @@
                 <p class="text-small mb-4">{{product.description}}</p>
 
                 <button data-pid={{product.id}} data-url="{% url "account:users_wishlist" %}"
-                    class="btn btn-link text-dark p-0 mb-4" id="add_to_wishlist"><i class="far fa-heart mr-2"></i>Add to
+                    class="btn btn-link text-dark p-0 mb-4" id="add_to_wishlist"><i class="far fa-heart mr-2"></i><span>Add to
                     wish
-                    list</button>
+                    list</span></button>
                 {% csrf_token %}<br>
                 <ul class="list-unstyled small d-inline-block">
                     <li class="px-3 py-2 mb-1 bg-white text-muted"><strong

@@ -18,7 +18,6 @@ from django.contrib import messages
 
 @login_required
 def dashboard(request):
-    # orders = user_orders(request)
     return render(request, "account/dashboard/dashboard.html")
 
 
@@ -146,12 +145,9 @@ def add_to_wishlist(request):
             product = get_object_or_404(Product, id=product_id)
             if product.users_wishlist.filter(id=request.user.id).exists():
                 product.users_wishlist.remove(request.user)
-                
-                print("removed into wishlist")
+                state = False
             else:
                 product.users_wishlist.add(request.user)
-                messages.success(request,"Added into Wishlist")
-                print("added into wishlist")
+                state = True
             length_of_wishlist = product.users_wishlist.all().count()
-            messages.success(request,"Removed from Wishlist")
-            return JsonResponse({"wishlist_items": length_of_wishlist}, status=200)
+            return JsonResponse({"wishlist_items": length_of_wishlist, "state":state}, status=200)
