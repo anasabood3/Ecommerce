@@ -82,7 +82,7 @@
                             </li>
 
                             <li class="nav-item"><a class="nav-link" href="{% url "account:wishlist"%}"> <i
-                                        class="far fa-heart mr-1"></i><small class="text-gray">{{wishlist|length}}</small></a></li>
+                                        class="far fa-heart mr-1"></i><small id='wishlist_length'class="text-gray">{{wishlist|length}}</small></a></li>
 
                             {% if request.user.is_authenticated %}
                             <li class="nav-item dropdown ">
@@ -148,6 +148,7 @@
         <script src="{% static 'store/vendor/owl.carousel2.thumbs/owl.carousel2.thumbs.min.js' %}"></script>
         <script src="{% static 'store/js/front.js' %}"></script>
         <script src="{% static 'store/js/product_details.js' %}"></script>
+         <script src="{% static 'store/js/wishlist.js' %}"></script>
         <script src="{% static 'account/js/account_security.js' %}"></script>
         {%block content2%}
         {%endblock%}

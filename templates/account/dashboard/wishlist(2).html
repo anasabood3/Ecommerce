@@ -88,7 +88,7 @@
                                 <th class="border-0" scope="col"> </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id='products_list'>
                             {% if wishlist %}
                             {%for product in wishlist%}
                             <tr>
@@ -112,8 +112,9 @@
                                     <p class="mb-0 small">${{product.regular_price}}</p>
                                 </td>
 
-                                <td class="align-middle border-0"><a class="reset-anchor" href="#"><i
-                                            class="fas fa-trash-alt small text-muted"></i></a></td>
+                                <td class="align-middle border-0"><button class="reset-anchor remove_product" data-pid={{product.id}} data-url="{% url "account:users_wishlist" %}"><i
+                                            class="fas fa-trash-alt small text-muted"></i></button></td>
+                                            {% csrf_token %}
                             </tr>
                             {%endfor%}
                             {%else%}
@@ -146,7 +147,7 @@
                                     class="text-muted small">{{wishlist|length}} items</span></li>
                             <li class="border-bottom my-2"></li>
                             <li class="d-flex align-items-center justify-content-between mb-4"><strong
-                                    class="text-uppercase small font-weight-bold">Total</strong><span>$250</span></li>
+                                    class="text-uppercase small font-weight-bold">Total</strong><span>${{total_price}}</span></li>
                         </ul>
                     </div>
                 </div>

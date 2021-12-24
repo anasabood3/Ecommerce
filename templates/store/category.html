@@ -24,7 +24,7 @@
                                 <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
                                 <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
                             </ul>
-                            <h2 class="h4">{{p.title}}</h2>
+                            {% comment %} <h2 class="h4">{{p.0.title}}</h2> {% endcomment %}
                             <p class="text-muted">$250</p>
                             <p class="text-small mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut
                                 ullamcorper leo, eget euismod orci. Cum sociis natoque penatibus et magnis dis
@@ -183,7 +183,9 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="row">
+                    <div  id="wishlist_alerts" class="alert alert-info" role="alert" hidden>
+                    </div>
+                    <div class="row" id='products'>
                         {%if not products%}
                         <br>
                         <div class="alert alert-primary col-md-8 mx-auto" role="alert">
@@ -198,8 +200,8 @@
                             <div class="product text-center">
                                 <div class="mb-3 position-relative">
                                     <div class="badge text-white badge-"></div><a class="d-block"
-                                        href="{{p.get_absolute_url}}">
-                                        {% for image in p.product_image.all %}
+                                        href="{{p.0.get_absolute_url}}">
+                                        {% for image in p.0.product_image.all %}
                                         {%if image.is_feature %}
                                         <img class="img-fluid w-100" src="{{ image.image.url }}"
                                             alt="{{ image.image.alt_text }}"></a>
@@ -209,16 +211,18 @@
 
                                     <div class="product-overlay">
                                         <ul class="mb-0 list-inline">
-                                            <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-outline-dark"
-                                                    href="#"><i class="far fa-heart"></i></a></li>
+                                        
+                                            <li class="list-inline-item m-0 p-0"><button data-pid={{p.0.id}} data-url="{% url "account:users_wishlist" %}" class="btn btn-sm btn-outline-dark add_to_wishlist">
+                                                   {%if p.1%} <i class="fa fa-heartbeat"></i>{%else%}<i class="far fa-heart"></i>{%endif%}</button></li>
+                                        {% csrf_token %}
                                             <li class="list-inline-item mr-0"><a class="btn btn-sm btn-outline-dark"
                                                     href="#productView" data-toggle="modal"><i
                                                         class="fas fa-expand"></i></a></li>
                                         </ul>
                                     </div>
                                 </div>
-                                <h6> <a class="reset-anchor" href="detail.html">{{p.title}}</a></h6>
-                                <p class="small text-muted">{{p.regular_price}} $</p>
+                                <h6> <a class="reset-anchor" href="detail.html">{{p.0.title}}</a></h6>
+                                <p class="small text-muted">{{p.0.regular_price}} $</p>
                             </div>
                         </div>
                         {%endfor%}

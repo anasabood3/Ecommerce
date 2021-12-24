@@ -101,11 +101,15 @@
                 <h1>{{product.title}}</h1>
                 <p class="text-muted lead">${{product.regular_price}}</p>
                 <p class="text-small mb-4">{{product.description}}</p>
-
+                {% if request.user.is_authenticated %}
                 <button data-pid={{product.id}} data-url="{% url "account:users_wishlist" %}"
-                    class="btn btn-link text-dark p-0 mb-4" id="add_to_wishlist"><i class="far fa-heart mr-2"></i><span>Add to
-                    wish
-                    list</span></button>
+                    class="btn btn-link text-dark p-0 mb-4 "id="add_to_wishlist"><i class="far fa-heart mr-2"></i>
+                    {% if product_state %}
+                    <span>Remove from wishlist</span></button>
+                    {% else %}
+                    <span>Add to wishlist</span></button>
+                    {% endif %}
+ {% endif %}
                 {% csrf_token %}<br>
                 <ul class="list-unstyled small d-inline-block">
                     <li class="px-3 py-2 mb-1 bg-white text-muted"><strong

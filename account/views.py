@@ -24,7 +24,28 @@ def dashboard(request):
 @login_required
 def wishlist(request):
     products = Product.objects.filter(users_wishlist=request.user)
-    return render(request, "account/dashboard/wishlist(2).html", {"wishlist": products})
+    total_price = 0
+    for i in products:total_price += i.regular_price
+    return render(request, "account/dashboard/wishlist(2).html", {"wishlist": products,'total_price':total_price})
+
+@login_required
+def add_to_wishlist(request):
+    if request.method == "POST":
+        if request.is_ajax():
+            product_id = request.POST.get("product_id")
+            product = get_object_or_404(Product, id=product_id)
+            if product.users_wishlist.filter(id=request.user.id).exists():
+                product.users_wishlist.remove(request.user)
+                state = False
+            else:
+                product.users_wishlist.add(request.user)
+                state = True
+            length_of_wishlist = (product.users_wishlist  # M2M Manager
+                .through  # subjects_students through table
+               .objects  # through table manager
+               .filter(userbase_id=request.user.id)  # your query against through table
+               .count())
+            return JsonResponse({"length_of_wishlist": length_of_wishlist, "state":state}, status=200)
 
 
 # @login_required
@@ -137,17 +158,3 @@ def delete_user(request):
 #     return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
-@login_required
-def add_to_wishlist(request):
-    if request.method == "POST":
-        if request.is_ajax():
-            product_id = request.POST.get("product_id")
-            product = get_object_or_404(Product, id=product_id)
-            if product.users_wishlist.filter(id=request.user.id).exists():
-                product.users_wishlist.remove(request.user)
-                state = False
-            else:
-                product.users_wishlist.add(request.user)
-                state = True
-            length_of_wishlist = product.users_wishlist.all().count()
-            return JsonResponse({"wishlist_items": length_of_wishlist, "state":state}, status=200)
