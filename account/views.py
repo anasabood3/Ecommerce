@@ -34,24 +34,28 @@ def wishlist(request):
 #Wishlist Managment
 @login_required
 def add_to_wishlist(request):
-    if request.method == "POST":
-        if request.is_ajax():
-            product_id = request.POST.get("product_id")
-            product = get_object_or_404(Product, id=product_id)
-            # if prpduct is already  exist then remove it
-            if product.users_wishlist.filter(id=request.user.id).exists():
-                product.users_wishlist.remove(request.user)
-                state = False
-            # Or add it if it was not there
-            else:
-                product.users_wishlist.add(request.user)
-                state = True
-            length_of_wishlist = (product.users_wishlist  # M2M Manager
-                .through  # subjects_students through table
-               .objects  # through table manager
-               .filter(userbase_id=request.user.id)  # your query against through table
-               .count())
-            return JsonResponse({"length_of_wishlist": length_of_wishlist, "state":state}, status=200)
+    if request.user.authenticated:
+        print('Fuck You')
+        if request.method == "POST":
+            if request.is_ajax():
+                product_id = request.POST.get("product_id")
+                product = get_object_or_404(Product, id=product_id)
+                # if prpduct is already  exist then remove it
+                if product.users_wishlist.filter(id=request.user.id).exists():
+                    product.users_wishlist.remove(request.user)
+                    state = False
+                # Or add it if it was not there
+                else:
+                    product.users_wishlist.add(request.user)
+                    state = True
+                length_of_wishlist = (product.users_wishlist  # M2M Manager
+                    .through  # subjects_students through table
+                .objects  # through table manager
+                .filter(userbase_id=request.user.id)  # your query against through table
+                .count())
+                return JsonResponse({"length_of_wishlist": length_of_wishlist, "state":state}, status=200)
+    else:
+        return redirect("account:login")
 
 # Usre Registration
 def account_register(request):

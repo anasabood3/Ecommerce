@@ -29,9 +29,5 @@ def product_details(request,slug):
     # productspecification = get_object_or_404(ProductSpecification, slug=slug, is_active=True)
     return render(request, 'store/product_details.html', {'product': product,'product_state':product_state})
 
-# def product_all(request):
-#     products = Product.objects.prefetch_related("product_image").filter(is_active=True)
-#     return render(request, "store/index.html", {"products": products})
-
 def contact_us(request):
     return render(request,'store/contact_us.html')
