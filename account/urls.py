@@ -11,6 +11,7 @@ urlpatterns = [
     # Registration
     path('register/', views.account_register, name='register'),
     path('activate/<slug:uidb64>/<slug:token>)/', views.account_activate, name='activate'),
+
     # Aythentication
     path('login/', auth_views.LoginView.as_view(template_name='account/login.html', form_class=UserLoginForm,
                                                 redirect_authenticated_user=True), name='login'),
@@ -41,7 +42,6 @@ urlpatterns = [
     path('profile/delete_confirm/', TemplateView.as_view(template_name="account/dashboard/delete_confirm.html"),name='delete_confirmation'),
 
     # Wish List
-    # path("wishlist/add_to_wishlist/<int:id>", views.add_to_wishlist, name="users_wishlist"),
     path("wishlist/add_to_wishlist/", views.add_to_wishlist, name="users_wishlist"),
     path("wishlist/", views.wishlist, name="wishlist"),
 ]

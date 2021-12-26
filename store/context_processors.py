@@ -6,5 +6,8 @@ def categories(request):
 
 
 def wishlist(request):
-    wishlist = Product.objects.filter(users_wishlist=request.user)
-    return {"wishlist": wishlist}
+    if request.user.is_authenticated:
+        wishlist = Product.objects.filter(users_wishlist=request.user)
+        return {"wishlist": wishlist}
+    else:
+        return {"wishlist": []}

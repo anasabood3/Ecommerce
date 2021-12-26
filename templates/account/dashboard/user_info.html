@@ -1,5 +1,6 @@
 {% extends "../sub_base.html" %}
 {% load static %}
+{% block title %}Dashboard| Personal Details{% endblock %}
 {% block sub_content %}
 
 
@@ -54,6 +55,9 @@
                                 <div class="media align-items-center">
                                     
 
+
+
+                                {% comment %} Update and Delete Built in templates buttons {% endcomment %}
                                     {% comment %} <div class="media-body">
                                         <div class="btn btn-sm btn-primary file-attachment-btn mb-2 mb-sm-0 mr-2">Upload
                                             Photo
@@ -62,6 +66,9 @@
 
                                         <a class="btn btn-sm btn-white mb-2 mb-sm-0" href="javascript:;">Delete</a>
                                     </div> {% endcomment %}
+
+
+
                                 </div>
                             </div>
                         </div>
@@ -78,7 +85,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- End Form Group -->
+                        
 
                         <!-- Form Group -->
                         <div class="row form-group">

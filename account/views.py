@@ -16,27 +16,33 @@ from .models import UserBase
 from .tokens import account_activation_token
 from django.contrib import messages
 
+
+#User Settings' Panel
 @login_required
 def dashboard(request):
     return render(request, "account/dashboard/dashboard.html")
 
-
+#Wishlist Page
 @login_required
 def wishlist(request):
     products = Product.objects.filter(users_wishlist=request.user)
     total_price = 0
+    #to_be_updated
     for i in products:total_price += i.regular_price
     return render(request, "account/dashboard/wishlist(2).html", {"wishlist": products,'total_price':total_price})
 
+#Wishlist Managment
 @login_required
 def add_to_wishlist(request):
     if request.method == "POST":
         if request.is_ajax():
             product_id = request.POST.get("product_id")
             product = get_object_or_404(Product, id=product_id)
+            # if prpduct is already  exist then remove it
             if product.users_wishlist.filter(id=request.user.id).exists():
                 product.users_wishlist.remove(request.user)
                 state = False
+            # Or add it if it was not there
             else:
                 product.users_wishlist.add(request.user)
                 state = True
@@ -47,23 +53,12 @@ def add_to_wishlist(request):
                .count())
             return JsonResponse({"length_of_wishlist": length_of_wishlist, "state":state}, status=200)
 
-
-# @login_required
-# def add_to_wishlist(request, id):
-#     product = get_object_or_404(Product, id=id)
-#     if product.users_wishlist.filter(id=request.user.id).exist():
-#         product.users_wishlist.remove(request.user)
-#         messages.success(request,"Added into Wishlist")
-#     else:
-#         product.users_wishlist.add(request.user)
-#         messages.success(request,"Removed from Wishlist")
-#     return HttpResponseRedirect(request.META["HTTP_REFERER"])
-
-
+# Usre Registration
 def account_register(request):
+    # if user already logged in
     if request.user.is_authenticated:
         return redirect("account:dashboard")
-
+    # Else create a new account
     if request.method == "POST":
         registerForm = RegistrationForm(request.POST)
         if registerForm.is_valid():
@@ -88,7 +83,6 @@ def account_register(request):
             user.email_user(subject=subject, message=message)
             return render(request, "account/registration/register_confirm.html")
     else:
-        print("not_valid")
         registerForm = RegistrationForm()
     return render(request, "account/registration/register.html", {"form": registerForm})
 
@@ -109,17 +103,7 @@ def account_activate(request, uidb64, token):
         return render(request, "account/registration/activation_invalid.html")
 
 
-# @login_required
-# def edit_details(request):
-#     if request.method == "POST":
-#         user_form = UserEditForm(instance=request.user, data=request.POST)
-
-#         if user_form.is_valid():
-#             user_form.save()
-#     else:
-#         user_form = UserEditForm(instance=request.user)
-
-#     return render(request, "account/dashboard/user_info.html", {"user_form": user_form})
+#Edit User Details
 @login_required
 def edit_details(request):
     if request.method == "POST":
@@ -131,6 +115,7 @@ def edit_details(request):
         user_form = UserEditForm(instance=request.user)
     return render(request, "account/dashboard/user_info.html", {"user_form": user_form})
 
+#Delete User Account
 @login_required
 def delete_user(request):
     if request.method == "POST":
@@ -147,14 +132,5 @@ def delete_user(request):
                 error = "You must Confirm The Deletion First"
             return JsonResponse({"state": state, "error": error}, status=200)
 
-
-# @login_required
-# def add_to_wishlist(request,id):
-#     product = get_object_or_404(Product, id=id)
-#     if product.users_wishlist.filter(id=request.user.id).exists():
-#         product.users_wishlist.remove(request.user)
-#     else:
-#         product.users_wishlist.add(request.user)
-#     return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 

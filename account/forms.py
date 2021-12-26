@@ -7,8 +7,9 @@ from .models import UserBase,GENDER
 
 class DateInput(forms.DateInput):
     input_type='date'
-class UserLoginForm(AuthenticationForm):
 
+# Login User Form
+class UserLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Username', 'id': 'login-username'}))
     password = forms.CharField(widget=forms.PasswordInput(
@@ -19,9 +20,9 @@ class UserLoginForm(AuthenticationForm):
         }
     ))
 
-
+# Registration Form
 class RegistrationForm(forms.ModelForm):
-    user_name = forms.CharField(label='Enter Username',min_length=4,max_length=50,help_text='please Enter the fucking username')
+    user_name = forms.CharField(label='Enter Username',min_length=4,max_length=50)
     email = forms.EmailField(max_length=100,help_text='Required',error_messages={'required':'You need email address'})
     first_name = forms.CharField(label='First Name',max_length=25)
     last_name = forms.CharField(label='Last Name',max_length=25)
@@ -78,6 +79,7 @@ class RegistrationForm(forms.ModelForm):
             {'class': 'form-control', 'placeholder': 'Repeat Password'})
 
 
+# Edit User Details Form
 class UserEditForm(forms.ModelForm):
 
     user_name = forms.CharField(
@@ -109,7 +111,6 @@ class UserEditForm(forms.ModelForm):
             attrs={'class': 'form-control', 'placeholder': 'About yourself ...', 'id': 'form-about'}))
     gender = forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control'}),choices=GENDER)
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control'}))
-    # image = forms.ImageField(widget=forms.TextInput(attrs={'class':'form-control', 'type':'file'}))
 
     class Meta:
         model = UserBase
@@ -120,6 +121,7 @@ class UserEditForm(forms.ModelForm):
         self.fields['user_name'].required = True
         self.fields['email'].required = True
 
+# Password Reset Form
 class PwdResetForm(PasswordResetForm):
 
     email = forms.EmailField(max_length=254, widget=forms.TextInput(
@@ -133,7 +135,6 @@ class PwdResetForm(PasswordResetForm):
                 'Unfortunatley there is no matching email address')
         return email
 
-
 class PwdResetConfirmForm(SetPasswordForm):
     new_password1 = forms.CharField(
         label='New password', widget=forms.PasswordInput(
@@ -142,6 +143,8 @@ class PwdResetConfirmForm(SetPasswordForm):
         label='Repeat password', widget=forms.PasswordInput(
             attrs={'class': 'form-control mb-3', 'placeholder': 'New Password', 'id': 'form-new-pass2'}))
 
+
+#Change Password form
 class PwdChangeForm(PasswordChangeForm):
     old_password = forms.CharField(
         label='Old password', widget=forms.PasswordInput(

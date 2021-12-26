@@ -57,7 +57,7 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
     )
     date_of_birth = models.DateField(max_length=8,default=date.today)
     
-    # Delivery details
+    # User Address
     country = CountryField()
     town_city = models.CharField(max_length=150, blank=True)
     

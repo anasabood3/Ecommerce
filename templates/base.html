@@ -27,7 +27,7 @@
         href="https://fonts.googleapis.com/css2?family=Martel+Sans:wght@300;400;800&amp;display=swap">
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="{% static 'store/css/style.default.css' %}" id="theme-stylesheet">
-    <!-- Custom stylesheet - for your changes-->
+    <!-- Custom stylesheet-->
     <link rel="stylesheet" href="{% static 'store/css/custom.css' %}">
     <!-- Favicon-->
     <link rel="shortcut icon" href="{% static 'store/img/favicon.png' %}">
@@ -38,7 +38,6 @@
     <div class="page-holder">
         <!-- Info NavBar -->
         <!-- Main NavBar -->
-        <!-- navbar-->
         <header class="header bg-light border-bottom">
             <div class="container px-0 px-lg-3">
                 <nav class="navbar navbar-expand-lg navbar-light py-1 px-lg-0">
@@ -54,7 +53,7 @@
                         <ul class="navbar-nav mr-auto">
 
                             <li class="nav-item">
-                                <!-- Link--><a class="nav-link active" href="{% url "store:home"%}">Home</a>
+                              <a class="nav-link active" href="{% url "store:home"%}">Home</a>
                             </li>
                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="pagesDropdown"
                                     href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Shop</a>
@@ -67,7 +66,7 @@
                                     {%endfor%}
                             </li>
                             <li class="nav-item">
-                                <!-- Link--><a class="nav-link" href="{% url "store:contact_us" %}">Contact Us</a>
+                              <a class="nav-link" href="{% url "store:contact_us" %}">Contact Us</a>
                             </li>
                         </ul>
 
@@ -81,10 +80,11 @@
                                 </form>
                             </li>
 
-                            <li class="nav-item"><a class="nav-link" href="{% url "account:wishlist"%}"> <i
-                                        class="far fa-heart mr-1"></i><small id='wishlist_length'class="text-gray">{{wishlist|length}}</small></a></li>
+                            
 
                             {% if request.user.is_authenticated %}
+                            <li class="nav-item"><a class="nav-link" href="{% url "account:wishlist"%}"> <i
+                                        class="far fa-heart mr-1"></i><small id='wishlist_length'class="text-gray">{{wishlist|length}}</small></a></li>
                             <li class="nav-item dropdown ">
                                 <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false"><i
@@ -110,15 +110,14 @@
                 </nav>
             </div>
         </header>
-        <!-- Content -->
+        
         {%block content%}
+        <!-- Main Content -->
         {%endblock%}
 
-        <!--- -->
-        <!--.............footer............-->
+       <!--Page Footer-->
         <footer class="section-footer border-top bg-light">
             <div class="container">
-                <!-- footer-top.// -->
 
                 <section class="footer-bottom row text-dark pt-2">
                     <div class="col-md-2">
@@ -134,11 +133,11 @@
                         <i class="fab fa-lg fa-cc-mastercard"></i>
                     </div>
                 </section>
-            </div><!-- //container -->
+            </div>
         </footer>
 
 
-        <!-- JavaScript files-->
+        <!-- Built in JavaScript Template files-->
         <script src="{% static 'store/vendor/jquery/jquery.min.js' %}"></script>
         <script src="{% static 'store/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
         <script src="{% static 'store/vendor/lightbox2/js/lightbox.min.js' %}"></script>
@@ -147,12 +146,19 @@
         <script src="{% static 'store/vendor/owl.carousel2/owl.carousel.min.js' %}"></script>
         <script src="{% static 'store/vendor/owl.carousel2.thumbs/owl.carousel2.thumbs.min.js' %}"></script>
         <script src="{% static 'store/js/front.js' %}"></script>
+
+        <!--My Scripts-->
         <script src="{% static 'store/js/product_details.js' %}"></script>
          <script src="{% static 'store/js/wishlist.js' %}"></script>
         <script src="{% static 'account/js/account_security.js' %}"></script>
+
+        
+        <!--For Adding Extra Scripts in Subpages-->
         {%block content2%}
         {%endblock%}
-        <!-- FontAwesome CSS - loading as last, so it doesn't block rendering-->
+
+
+        <!-- FontAwesome CSS -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
             integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
