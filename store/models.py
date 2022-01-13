@@ -29,6 +29,9 @@ class Category(MPTTModel):
     def get_absolute_url(self):
         return reverse("store:category_list", args=[self.slug])
 
+    def get_management_url(self):
+        return reverse("management:edit_category", args=[self.slug])
+    
     def __str__(self):
         return self.name
 
@@ -119,9 +122,14 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse("store:product_detail", args=[self.slug])
 
+    def get_management_url(self):
+        return reverse("management:edit_product", args=[self.slug])
+    
     def added_to_wishlist(self,user_id):
         product_state = (Product.users_wishlist.through.objects.filter(product_id = self.id, userbase_id = user_id).exists())
         return product_state
+    
+
     
     def __str__(self):
         return self.title

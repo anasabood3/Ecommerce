@@ -34,8 +34,7 @@ def wishlist(request):
 #Wishlist Managment
 @login_required
 def add_to_wishlist(request):
-    if request.user.authenticated:
-        print('Fuck You')
+    if request.user.is_authenticated:
         if request.method == "POST":
             if request.is_ajax():
                 product_id = request.POST.get("product_id")
