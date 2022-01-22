@@ -16,6 +16,8 @@
             <div class="card-body">
                 {{ form.non_form_errors }}
                 {{ form.as_p }}
+                {{product_type_form.as_p}}
+                {{specs_formset.as_p}}
                 <h5 class="text-info">Add Product Type Specs</h5>
                 {{ product_specs_formset.non_form_errors }}
                 {{ product_specs_formset.management_form }}

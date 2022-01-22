@@ -1,10 +1,11 @@
 from django.shortcuts import render,get_object_or_404
-from .models import Category, Product
+from .models import Category, Offer, Product
 
 
 def home(request):
-    category = Category.objects.all()
-    return render(request,'store\index.html',{'catigories':category})
+    categories = Category.objects.all()
+    offers = Offer.objects.all()
+    return render(request,'store\index.html',{'catigories':categories,'offers':offers})
 
 
 def category_products(request,slug_category=None):

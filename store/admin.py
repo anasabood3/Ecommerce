@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from django.contrib.admin.sites import AdminSite
 from mptt.admin import MPTTModelAdmin
 
 from .models import (
@@ -9,6 +10,7 @@ from .models import (
     ProductSpecification,
     ProductSpecificationValue,
     ProductType,
+    Offer,
 )
 
 admin.site.register(Category, MPTTModelAdmin)
@@ -39,3 +41,6 @@ class ProductAdmin(admin.ModelAdmin):
         ProductSpecificationValueInline,
         ProductImageInline,
     ]
+
+admin.site.register(Offer)
+

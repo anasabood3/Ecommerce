@@ -5,7 +5,7 @@ from django.db.models import fields
 from django.forms import widgets
 from django.forms.fields import CharField, ImageField
 from django.forms.models import inlineformset_factory
-from store.models import Category, Product, ProductImage, ProductSpecificationValue,ProductType,ProductSpecification
+from store.models import Category, Offer, Product, ProductImage, ProductSpecificationValue,ProductType,ProductSpecification
 from django.utils.translation import ugettext as _
 
 #-------------Category Forms-------------------
@@ -118,3 +118,11 @@ ProductTypeFormset = inlineformset_factory(ProductType,  # parent form
                                                   can_delete=True,
                                                   extra=2
                                                   )
+class OfferForm(forms.ModelForm):
+    title = forms.CharField(label='Title', min_length=4, max_length=255)
+    description = forms.CharField(label='Description')
+    slug = CharField(label='Slug',help_text="No Spaces")
+    image = ImageField(label='Offer Image',help_text="Keep It Simple")
+    class Meta:
+        model = Offer
+        fields=['title','description','image','slug']

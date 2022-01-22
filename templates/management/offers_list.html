@@ -1,5 +1,5 @@
 {% extends "../base.html" %}
-{% block title %}Category Management{% endblock %}
+{% block title %}Offers Management{% endblock %}
 
 {% block extra_links %}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
@@ -182,10 +182,10 @@ $(document).ready(function(){
             <div class="table-title">
                 <div class="row">
                     <div class="col-sm-5">
-                        <h2>Product <b>Management</b></h2>
+                        <h2>Offers <b>Management</b></h2>
                     </div>
                     <div class="col-sm-7">
-                        <a href="{% url 'management:create_category'%}" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Ctegory</span></a>
+                        <a href="{% url 'management:create_offer'%}" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Ctegory</span></a>
                         <a href="#" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>						
                     </div>
                 </div>
@@ -202,22 +202,18 @@ $(document).ready(function(){
                     </tr>
                 </thead>
                 <tbody>
-                    {%for category in categories%} 
+                    {%for offer in offers%} 
                 <!-- Begin of Item -->
                     <tr>
                         <td>{{category.id}}</td>
                         <td><a href="#">
-                            {{category.name}}</a></td>
+                        {{offer.title}}</a></td>
                         <td>Unknown</td>                        
                         <td>Admin</td>
-                        {%if category.is_active%}
                         <td><span class="status text-success">&bull;</span> Active </td>
-                        {%else%}
-                        <td><span class="status text-warning">&bull;</span> Inactive</td>
-                        {%endif%}
                         <td>
-                           <a href="{{category.get_management_url}}" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
-                            <a href="{{category.get_delete_url}}" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
+                           <a href="{{offer.get_edit_url}}" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
+                            <a href="{{offer.get_delete_url}}" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
                         </td>
                     </tr>
                 <!-- End of Item -->

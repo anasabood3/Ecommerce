@@ -216,8 +216,8 @@ $(document).ready(function(){
                         <td><span class="status text-warning">&bull;</span> Inactive</td>
                         {%endif%}
                         <td>
-                           <a href="{{product_type.get_managment_url}}" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
-                            <a href="#" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
+                           <a href="{{product_type.get_edit_url}}" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xE8B8;</i></a>
+                            <a href="{{ product_type.get_delete_url}}" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE5C9;</i></a>
                         </td>
                     </tr>
                 <!-- End of Item -->

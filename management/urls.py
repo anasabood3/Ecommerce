@@ -18,7 +18,7 @@ urlpatterns = [
     
     # Product Types
     path('product-types/', views.ProductTypeListView.as_view(), name='product_types'),
-    # path('product-types/edit/<int:product_type_id>/',views.edit_product_type,name='edit_product_type'),
+    path('product-types/edit/<int:product_type_id>/',views.ProductTypeEditView.as_view(),name='edit_product_type'),
     path('product-types/delete/<int:product_type_id>/',views.ProductTypeDeleteView.as_view(),name='delete_product_type'),
     path('product-types/add-new-product-type/',views.ProductTypeCreateView.as_view(),name='add_product_type'),
     
@@ -27,4 +27,10 @@ urlpatterns = [
     path('categories/edit/<slug:slug>',views.CategoryEditView.as_view(),name='edit_category'),
     path('categories/delete/<slug:slug>',views.CategoryDeleteView.as_view(),name='delete_category'),
     path('categories/add-new-category/',views.CategoryCreateView.as_view(),name='create_category'),
+
+    #Offers
+    path('offers/', views.OfferListView.as_view(), name='offers'),
+    path('offers/edit/<slug:slug>',views.OfferEditView.as_view(),name='edit_offer'),
+    path('offers/delete/<slug:slug>',views.OfferDeleteView.as_view(),name='delete_offer'),
+    path('offers/add-new-offer/',views.OfferCreateView.as_view(),name='create_offer'),
 ]

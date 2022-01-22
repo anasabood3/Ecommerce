@@ -26,14 +26,18 @@ class Category(MPTTModel):
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
 
+    def __str__(self):
+        return self.name
+
+    # Management URLS
     def get_absolute_url(self):
         return reverse("store:category_list", args=[self.slug])
 
     def get_management_url(self):
         return reverse("management:edit_category", args=[self.slug])
-    
-    def __str__(self):
-        return self.name
+        
+    def get_delete_url(self):
+        return reverse("management:delete_category",args=[self.slug])
 
 
 class ProductType(models.Model):
@@ -52,6 +56,11 @@ class ProductType(models.Model):
     def __str__(self):
         return self.name
 
+    # Management URLs
+    def get_edit_url(self):
+        return reverse("management:edit_product_type",args=[self.pk]) 
+    def get_delete_url(self):
+        return reverse("management:delete_product_type",args=[self.pk])
 
 class ProductSpecification(models.Model):
     """
@@ -118,22 +127,26 @@ class Product(models.Model):
         ordering = ("-created_at",)
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
+    def __str__(self):
+        return self.title
 
+    # Management URLs
     def get_absolute_url(self):
         return reverse("store:product_detail", args=[self.slug])
 
     def get_management_url(self):
         return reverse("management:edit_product", args=[self.slug])
     
+    def get_delete_url(self):
+        return reverse("management:delete_product",args=[self.slug])
+
     def added_to_wishlist(self,user_id):
         product_state = (Product.users_wishlist.through.objects.filter(product_id = self.id, userbase_id = user_id).exists())
         return product_state
     
 
     
-    def __str__(self):
-        return self.title
-
+    
 
 class ProductSpecificationValue(models.Model):
     """
@@ -183,3 +196,29 @@ class ProductImage(models.Model):
     class Meta:
         verbose_name = _("Product Image")
         verbose_name_plural = _("Product Images")
+
+class Offer(models.Model):
+    # Caroussel Offers
+    title = models.CharField(verbose_name=_("Title"), help_text=_("Required"), max_length=40)
+    description = models.CharField(verbose_name=_("Description"),help_text=_("Short As Possiable"),max_length=90)
+    image = models.ImageField(
+        verbose_name=_("image"),
+        help_text=_("Upload an Offer image"),
+        upload_to="images/",
+        default="images/default.png",
+    )
+    slug = models.SlugField(max_length=40)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Offer")
+        verbose_name_plural = _("Offers")
+    def __str__(self):
+        return self.title
+        #Management URLs
+    def get_edit_url(self):
+        return reverse("management:edit_offer", args=[self.slug])
+    
+    def get_delete_url(self):
+        return reverse("management:delete_offer",args=[self.slug])
