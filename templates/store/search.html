@@ -1,0 +1,63 @@
+{% extends "base.html" %} {% load static %} {% block title %}Search|{{ q }}
+{% endblock %} {% block content %}
+
+<div class="container">
+
+
+
+  <!-- CATEGORIES SECTION-->
+  <section class="pt-5">
+    <header class="text-left">
+    {% if q %}
+      <h2 class="h5 text-uppercase">Products Contiaing: "{{q}}"</h2>
+        <p class="small text-muted small text-uppercase mb-1">
+            {% with results.count as total_results%}
+            Found {{total_results}} result{{total_results|pluralize}}
+            {% endwith %}
+        </p>
+    {% endif %}
+    </header>
+
+  </section>
+  <!-- TRENDING PRODUCTS-->
+  <section class="py-5">
+    <header>
+    
+    </header>
+    
+
+    {%for product in results%}
+    <div class="row">
+    {{product.title}}
+    </div>
+    {% endfor %}
+
+  </section>
+  
+</div>
+
+<script>
+  // ------------------------------------------------------- //
+  //   Inject SVG Sprite - 
+  //   see more here 
+  //   https://css-tricks.com/ajaxing-svg-sprite/
+  // ------------------------------------------------------ //
+  function injectSvgSprite(path) {
+
+    var ajax = new XMLHttpRequest();
+    ajax.open("GET", path, true);
+    ajax.send();
+    ajax.onload = function (e) {
+      var div = document.createElement("div");
+      div.className = 'd-none';
+      div.innerHTML = ajax.responseText;
+      document.body.insertBefore(div, document.body.childNodes[0]);
+    }
+  }
+  // this is set to BootstrapTemple website as you cannot 
+  // inject local SVG sprite (using only 'icons/orion-svg-sprite.svg' path)
+  // while using file:// protocol
+  // pls don't forget to change to your domain :)
+  injectSvgSprite('https://bootstraptemple.com/files/icons/orion-svg-sprite.svg');
+</script>
+{%endblock%}

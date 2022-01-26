@@ -1,11 +1,14 @@
 {% extends "./sub_base.html" %}
 {% block title %}Product Type Edit{% endblock %}
 
-
-<!--path_to_template_to_assignment_create_form.html-->
-
-
 {% block sub_content %}
+
+<style>
+    .hidden{
+        display: none;
+    }
+</style>
+
 <div class="container mt-4">
     <form method="post">
         {% csrf_token %}
@@ -14,29 +17,77 @@
                 <h4>Create Product Type</h4>
             </div>
             <div class="card-body">
-                {{ form.non_form_errors }}
-                {{ form.as_p }}
+
+                {% comment %} 
+
                 {{product_type_form.as_p}}
-                {{specs_formset.as_p}}
+
+                {{specs_formset.as_p}} {% endcomment %}
+
+                {{ form.non_form_errors }}
+                
+                {{ form.as_table }}
+                
                 <h5 class="text-info">Add Product Type Specs</h5>
+
                 {{ product_specs_formset.non_form_errors }}
+
                 {{ product_specs_formset.management_form }}
-                {% for form in product_specs_formset %}
-                <div class="d-flex py-1 inline {{ product_specs_formset.prefix }}">
-                    <div>{{form.name.label}}: {{ form.name }}</div>
-                    <div class="ml-4">{{form.value.label}}: {{ form.value }}</div>
-                    {% if product_specs_formset.can_delete %}
-                        <div class="ml-4">{{ form.DELETE }} {{ form.DELETE.label }}</div>
-                    {% endif %}
+
+                <div id="specs-form">
+                    {% for form in product_specs_formset %}
+
+                    <div class="d-flex py-1 inline spec-form-item {{ product_specs_formset.prefix }}">
+    
+                        <div>{{form.name.label}} {{ form.name }}</div>
+                    
+                        <div class="ml-4">{{form.value.label}}: {{ form.value }}</div>
+                    
+                        {% if product_specs_formset.can_delete %}
+                            <div class="ml-4">{{ form.DELETE }} {{ form.DELETE.label }}</div>
+                        {% endif %}
+                        </div>
+
+                    {% endfor %}
+
                 </div>
-                {% endfor %}
+
+                <div id="empty-form" class="hidden" >{{product_specs_formset.empty_form}}</div>
+
             </div>
         </div>
         <div class="mt-3 mb-5">
             <button type="submit" class="px-5 btn btn-info">Submit</button>
+            <button id="add-more" type="button" class="px-5 btn btn-info">Add More</button>
         </div>
     </form>
+
+   
 </div>
+    <script>
+        const addMoreBtn = document.getElementById('add-more')
+        const totalNewForms = document.getElementById('id_productspecification_set-TOTAL_FORMS')
+        
+        addMoreBtn.addEventListener('click',add_new_form)
+        
+        function add_new_form(event){
+            if(event){
+                event.preventDefault()
+
+            }
+            
+            const currentSpecsForms = document.getElementsByClassName('specs-form-item')
+            const currentFormCount = currentSpecsForms.length
+            const formCopyTarget = document.getElementById('specs-form')
+            const copyEmptyFormEl = document.getElementById('empty-form').cloneNode(true)
+            copyEmptyFormEl.setAttribute('class', 'specs-form-item')
+            copyEmptyFormEl.setAttribute('id', `form-${currentFormCount}`)
+            const regex = new RegExp('__prefix__', 'g')
+            copyEmptyFormEl.innerHTML = copyEmptyFormEl.innerHTML.replace(regex, currentFormCount)
+            totalNewForms.setAttribute('value', currentFormCount + 1)
+            formCopyTarget.append(copyEmptyFormEl)
+        }
+    </script>
 {% endblock %}
 
 

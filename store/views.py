@@ -1,4 +1,6 @@
 from django.shortcuts import render,get_object_or_404
+
+from store.forms import ProductSearchForm
 from .models import Category, Offer, Product
 
 
@@ -32,3 +34,20 @@ def product_details(request,slug):
 
 def contact_us(request):
     return render(request,'store/contact_us.html')
+
+def product_search(request):
+    form = ProductSearchForm()
+    q = ''
+    results = []
+
+    if 'q' in request.GET:
+        form = ProductSearchForm(request.GET)
+        if form.is_valid():
+            q = form.cleaned_data['q']
+            results = Product.objects.filter(title__contains = q)
+    return render(request, 'store/search.html',
+    {
+        'form':form,
+        'q':q,
+        'results':results
+    })

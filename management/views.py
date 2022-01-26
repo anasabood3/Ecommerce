@@ -16,6 +16,7 @@ from django.contrib import messages
 #List Products
 class ProductListView(ListView):
     model = Product
+    paginate_by = 2
     context_object_name = 'products'
     template_name = 'management/product_list.html'
 
@@ -90,7 +91,7 @@ class ProductTypeEditView(View):
             product_type_form.save()
             specs_formset.save()
             messages.success(request,"Changes were saved successfully")
-        context = {'product_type':product_type_form,'specs_formset':specs_formset}
+        context = {'from':product_type_form,'product_specs_formset':specs_formset}
         return render(request,self.template,context)
 
 
@@ -163,7 +164,7 @@ class ProductTypeCreateView(CreateView):
         for meta in product_specs:
             meta.product_type = self.object
             meta.save()
-        messages.success(request,"Changes were saved successfully")
+        
 
         return redirect(reverse("management:product_types"))
 

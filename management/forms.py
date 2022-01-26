@@ -116,7 +116,7 @@ ProductTypeFormset = inlineformset_factory(ProductType,  # parent form
                                                         'name': None,
                                                   },
                                                   can_delete=True,
-                                                  extra=2
+                                                  extra=1
                                                   )
 class OfferForm(forms.ModelForm):
     title = forms.CharField(label='Title', min_length=4, max_length=255)
