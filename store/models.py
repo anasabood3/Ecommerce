@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 from django.conf import settings
 
+from account.models import UserBase
+
 class Category(MPTTModel):
     """
     Category Table implimented with MPTT.
@@ -153,7 +155,7 @@ class ProductSpecificationValue(models.Model):
     The Product Specification Value table holds each of the
     products individual specification or bespoke features.
     """
-
+# ,limit_choices_to={'id__in':list(ProductSpecification.objects.filter(product_type=Product.objects.get(id=3).product_type).values_list('id', flat=True))}
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     specification = models.ForeignKey(ProductSpecification, on_delete=models.RESTRICT)
     value = models.CharField(
@@ -180,7 +182,7 @@ class ProductImage(models.Model):
         verbose_name=_("image"),
         help_text=_("Upload a product image"),
         upload_to="images/",
-        default="images/default.png",
+        default="images/thumbnail.jpg",
     )
     alt_text = models.CharField(
         verbose_name=_("Alturnative text"),
@@ -222,3 +224,20 @@ class Offer(models.Model):
     
     def get_delete_url(self):
         return reverse("management:delete_offer",args=[self.slug])
+
+class Comment(models.Model):
+    '''
+    User Comments on a Specific product
+    '''
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name="comments")
+    user = models.ForeignKey(UserBase,on_delete=models.CASCADE)
+    user_name = models.CharField(max_length=30,default="Unknown")
+    content = models.CharField(max_length=255)
+    publish_date = models.DateField(auto_now_add=True)
+    status = models.BooleanField(default=True)
+
+    class Meta:
+        ordering=("publish_date",)
+
+    def __str__(self):
+        return f"Comment By{self.user}"

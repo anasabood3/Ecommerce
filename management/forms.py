@@ -1,3 +1,4 @@
+from pyexpat import model
 from typing import Counter
 from django import forms
 from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,SetPasswordForm,PasswordChangeForm)
@@ -57,34 +58,50 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ('title','category','product_type','description','slug','regular_price','discount_price','is_active',)
 
+
+
+
+class ProductSpecificationValueForm(forms.ModelForm):
+    def get_product(self):
+        return self.cleaned_data['product']
+
+    # specification = forms.ModelChoiceField(queryset=ProductSpecification.objects.filter(product_type=1))
+
+    
+    class Meta:
+        model=ProductSpecificationValue
+        fields = ('specification','value')
+
 ProductSpecsFormset = inlineformset_factory(Product,  # parent form
                                                   ProductSpecificationValue,  # inline-form
-                                                  fields=['specification','value'], # inline-form fields
+                                                  form=ProductSpecificationValueForm,
+                                                #   fields=['specification','value'], # inline-form fields
                                                   # labels for the fields
                                                   widgets = {'value': forms.TextInput(attrs = {'class': 'form-control', 'placeholder': 'Product Type Name'})},
                                                   labels={
                                                         'specification': _(u'Specification:'),
                                                         'value': _(u'Value:'),
                                                   },
-                                                  # help texts for the fields
+                                                #   # help texts for the fields
                                                   help_texts={'specification':None,'value': None,},
-                                                  # set to false because cant' delete an non-exsitant instance
+                                                #   # set to false because cant' delete an non-exsitant instance
                                                   can_delete=True,
                                                   # how many inline-forms are sent to the template by default
-                                                  extra=2
+                                                  extra=2,
                                                   )
 
 ProductImagesFormset = inlineformset_factory(Product,  # parent form
                                                   ProductImage,  # inline-form
-                                                  fields=['image','alt_text'], # inline-form fields
+                                                  fields=['image','is_feature','alt_text'], # inline-form fields
                                                   # labels for the fields
                                                 
                                                   labels={
                                                         'image': _(u'Image:'),
                                                         'alt_text': _(u'Alt Text:'),
+                                                        'is_feature': _(u'Cover Image:'),
                                                   },
                                                   # help texts for the fields
-                                                  help_texts={'image':None,'alt_text': None,},
+                                                  help_texts={'image':None,'alt_text': None,'is_feature': None,},
                                                   # set to false because cant' delete an non-exsitant instance
                                                   can_delete=True,
                                                   # how many inline-forms are sent to the template by default

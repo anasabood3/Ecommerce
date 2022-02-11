@@ -238,9 +238,9 @@ $(document).ready(function(){
                 <ul class="pagination">
                     {% if page_obj.has_previous %}
                     <li class="page-item "><a href="?page=1" class="page-link">First</a></li>
+                    
                     <li class="page-item "><a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a></li>
                     {% endif %}
-            
                     {% if page_obj.has_next %}
                     <li class="page-item"><a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a></li>
                     <li class="page-item"><a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Last</a></li>

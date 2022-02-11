@@ -11,6 +11,7 @@ from .models import (
     ProductSpecificationValue,
     ProductType,
     Offer,
+    Comment,
 )
 
 admin.site.register(Category, MPTTModelAdmin)
@@ -44,3 +45,9 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(Offer)
 
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("product","user_name","publish_date")
+    list_filter = ("status","publish_date")
+    search_fields = ("user_name","content")

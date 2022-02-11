@@ -1,63 +1,43 @@
-{% extends "base.html" %} {% load static %} {% block title %}Search|{{ q }}
+{% extends "base.html" %} {% load static %} {% block title %}Search|{{ form.q.value }}
 {% endblock %} {% block content %}
 
 <div class="container">
 
 
+  {% comment %} <!-- Search Form Section -->
+  <section class="pt-3 col-9">
+    <form class="form-inline dropdown my-2 pr-5 my-lg-0" method='get' autocomplete="off">
+      {{form.q}}
+      <ul class="dropdown-menu col-8 pl-2" role="menu" areia-labelledby="menu" id="list">
+      </ul>
+      <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+      {% csrf_token %}
+    </form>
+  </section> {% endcomment %}
 
-  <!-- CATEGORIES SECTION-->
+  <!-- Header SECTION-->
   <section class="pt-5">
     <header class="text-left">
-    {% if q %}
+      {% if q %}
       <h2 class="h5 text-uppercase">Products Contiaing: "{{q}}"</h2>
-        <p class="small text-muted small text-uppercase mb-1">
-            {% with results.count as total_results%}
-            Found {{total_results}} result{{total_results|pluralize}}
-            {% endwith %}
-        </p>
-    {% endif %}
+      <p class="small text-muted small text-uppercase mb-1">
+        {% with results.count as total_results%}
+        Found {{total_results}} result{{total_results|pluralize}}
+        {% endwith %}
+      </p>
+      {% endif %}
     </header>
-
   </section>
-  <!-- TRENDING PRODUCTS-->
+
+  <!-- Results Section -->
   <section class="py-5">
     <header>
-    
     </header>
-    
-
     {%for product in results%}
     <div class="row">
-    {{product.title}}
+      {{product.title}}
     </div>
     {% endfor %}
-
   </section>
-  
 </div>
-
-<script>
-  // ------------------------------------------------------- //
-  //   Inject SVG Sprite - 
-  //   see more here 
-  //   https://css-tricks.com/ajaxing-svg-sprite/
-  // ------------------------------------------------------ //
-  function injectSvgSprite(path) {
-
-    var ajax = new XMLHttpRequest();
-    ajax.open("GET", path, true);
-    ajax.send();
-    ajax.onload = function (e) {
-      var div = document.createElement("div");
-      div.className = 'd-none';
-      div.innerHTML = ajax.responseText;
-      document.body.insertBefore(div, document.body.childNodes[0]);
-    }
-  }
-  // this is set to BootstrapTemple website as you cannot 
-  // inject local SVG sprite (using only 'icons/orion-svg-sprite.svg' path)
-  // while using file:// protocol
-  // pls don't forget to change to your domain :)
-  injectSvgSprite('https://bootstraptemple.com/files/icons/orion-svg-sprite.svg');
-</script>
 {%endblock%}

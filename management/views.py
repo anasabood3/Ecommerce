@@ -19,7 +19,7 @@ class ProductListView(ListView):
     paginate_by = 2
     context_object_name = 'products'
     template_name = 'management/product_list.html'
-
+    
 #List Categories
 class CategoryListView(ListView):
     model = Category
@@ -78,7 +78,7 @@ class ProductTypeEditView(View):
         product_type = get_object_or_404(ProductType,pk=product_type_id)
         product_type_form = ProductTypeForm(instance=product_type)
         specs_formset = ProductTypeFormset(instance=product_type,prefix='specs')
-        context = {'product_type_form':product_type_form,'specs_formset':specs_formset}
+        context = {'product_type_form':product_type_form,'product_specs_formset':specs_formset}
         print("get again")
         return render(request,self.template,context)
 
@@ -91,7 +91,7 @@ class ProductTypeEditView(View):
             product_type_form.save()
             specs_formset.save()
             messages.success(request,"Changes were saved successfully")
-        context = {'from':product_type_form,'product_specs_formset':specs_formset}
+        context = {'product_type_form':product_type_form,'product_specs_formset':specs_formset}
         return render(request,self.template,context)
 
 
