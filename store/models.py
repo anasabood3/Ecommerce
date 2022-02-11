@@ -225,19 +225,20 @@ class Offer(models.Model):
     def get_delete_url(self):
         return reverse("management:delete_offer",args=[self.slug])
 
-class Comment(models.Model):
+class Comment(MPTTModel):
     '''
     User Comments on a Specific product
     '''
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name="comments")
+    parent = TreeForeignKey('self',on_delete=models.CASCADE,null=True,blank=True,related_name='chilren')
     user = models.ForeignKey(UserBase,on_delete=models.CASCADE)
     user_name = models.CharField(max_length=30,default="Unknown")
     content = models.CharField(max_length=255)
     publish_date = models.DateField(auto_now_add=True)
     status = models.BooleanField(default=True)
 
-    class Meta:
-        ordering=("publish_date",)
+    class MPTTMeta:
+        order_insertion_by=['publish_date']
 
     def __str__(self):
         return f"Comment By{self.user}"

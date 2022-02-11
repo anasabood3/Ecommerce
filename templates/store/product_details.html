@@ -143,39 +143,37 @@
             <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                 <div class="p-4 p-lg-5 bg-white">
                     <div class="row">
-                        <div class="col-lg-8">
-                            <div class="media mb-3"><img class="rounded-circle" src="img/customer-1.png" alt=""
-                                    width="50">
-                                {%for comment in comments%}
+                        {%load mptt_tags%}
+                        {%recursetree comments%}
+                        <div class="col-lg-8 border border-primary">
+                            <div class="media mb-3"><img class="rounded-circle" src="https://www.w3schools.com/howto/img_avatar.png" alt="" width="50">
                                 <div class="media-body ml-3">
-                                    <h6 class="mb-0 text-uppercase">{{comment.user_name}}</h6>
-                                    <p class="small text-muted mb-0 text-uppercase">{{comment.publish_date}}</p>
-                                    <ul class="list-inline mb-1 text-xs">
-                                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                                        <li class="list-inline-item m-0"><i
-                                                class="fas fa-star-half-alt text-warning"></i></li>
-                                    </ul>
-                                    <p class="text-small mb-0 text-muted">{{comment.content}}</p>
+                                    <h6 class="mb-0 text-uppercase">{{node.user_name}}</h6>
+                                    <p class="small text-muted mb-0 text-uppercase">{{node.publish_date}}</p>
+                                    <p class="text-small mb-0 text-muted" id="{{node.id}}">{{node.content}}</p>
                                 </div>
-                                {%endfor%}
-                               
+                                {%if node.level < 1%}
+                                <button class="button" onclick="myFunction({{node.id}})">Reply</button>
+                                {%endif%}
+
+                                {%if not node.is_leafe_node%}
+                               {{children}}
+                                {%endif%}
                             </div>
-                            <form class="row g-3" method='post'>
-                                {% csrf_token %}
-                                <div class="col-auto">
-                                  {{comment_form.content}}
-                                </div>
-                                <div class="col-auto">
-                                  <button type="submit" class="btn btn-primary mb-3">Comment</button>
-                                </div>
-                            </form>
-                           
                         </div>
-                        
+                        {%endrecursetree%}
                     </div>
+                    <!--input form-->
+                    <form class="row g-3" method='post'>
+                        {% csrf_token %}
+                        <div class="col-auto">
+                            {{comment_form.parent}}
+                          {{comment_form.content}}
+                        </div>
+                        <div class="col-auto">
+                          <button type="submit" class="btn btn-primary mb-3">Comment</button>
+                        </div>
+                    </form>
                 </div>
             </div>
             
@@ -209,6 +207,30 @@
 {%endblock%}
 {%block content2%}
 <script>
+function myFunction(id){
+
+    if(document.contains(document.getElementById('newForm'))){
+        document.getElementById('newForm').remove("");
+    }
+
+    var a = document.getElementById(id);
+    var comment_form = '<form class="row g-3" id="newForm" method="post">\
+        {% csrf_token %}\
+        <div class="col-auto">\
+            <select name="parent" class="d-none" id="id_parent"><option value="'+id+'" selected="'+id+'"></option></select>\
+          {{comment_form.content}}\
+        </div>\
+        <div class="col-auto">\
+          <button type="submit" class="btn btn-primary mb-3">Reply</button>\
+        </div>\
+    </form>';
+
+    a.insertAdjacentHTML('afterend',comment_form);
+}
+</script>
+
+
+<script>
     // ------------------------------------------------------- //
     //   Inject SVG Sprite - 
     //   see more here 
@@ -233,3 +255,5 @@
     injectSvgSprite('https://bootstraptemple.com/files/icons/orion-svg-sprite.svg');
 </script>
 {%endblock%}
+
+

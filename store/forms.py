@@ -3,7 +3,7 @@ from django import forms
 from django.db.models import fields
 from django.forms import widgets
 from django.utils.translation import ugettext as _
-
+from mptt.forms import TreeNodeChoiceField
 from .models import Comment
 
 class ProductSearchForm(forms.Form):
@@ -21,10 +21,16 @@ class ProductSearchForm(forms.Form):
         )
 
 class CommentForm(forms.ModelForm):
-
+    parent = TreeNodeChoiceField(queryset=Comment.objects.all())
     class Meta:
         model = Comment
-        fields = ('content',)
+        fields = ('content','parent',)
         wedgits = {
             "content":forms.Textarea(attrs={"class":"form-control"}),
         }
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['parent'].required=False
+        self.fields['parent'].widget.attrs.update(
+            {'class':'d-none'}
+        )
