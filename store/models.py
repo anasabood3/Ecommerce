@@ -225,6 +225,7 @@ class Offer(models.Model):
     def get_delete_url(self):
         return reverse("management:delete_offer",args=[self.slug])
 
+
 class Comment(MPTTModel):
     '''
     User Comments on a Specific product
@@ -242,3 +243,8 @@ class Comment(MPTTModel):
 
     def __str__(self):
         return f"Comment By{self.user}"
+
+    def is_parent(self):
+        if self.parent is None:
+            return True
+        return False

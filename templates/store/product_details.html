@@ -142,7 +142,7 @@
             
             <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                 <div class="p-4 p-lg-5 bg-white">
-                    <div class="row">
+                    <div class="row" id="comments_section">
                         {%load mptt_tags%}
                         {%recursetree comments%}
                         <div class="col-lg-8 border border-primary">
@@ -153,7 +153,7 @@
                                     <p class="text-small mb-0 text-muted" id="{{node.id}}">{{node.content}}</p>
                                 </div>
                                 {%if node.level < 1%}
-                                <button class="button" onclick="myFunction({{node.id}})">Reply</button>
+                                <button class="button" onclick="create_reply({{node.id}})">Reply</button>
                                 {%endif%}
 
                                 {%if not node.is_leafe_node%}
@@ -164,16 +164,18 @@
                         {%endrecursetree%}
                     </div>
                     <!--input form-->
-                    <form class="row g-3" method='post'>
+                    <form class="row g-3" method='post' id="comment_form" onsubmit="event.preventDefault(); comment('comment_form');">
                         {% csrf_token %}
                         <div class="col-auto">
-                            {{comment_form.parent}}
+                          
                           {{comment_form.content}}
                         </div>
                         <div class="col-auto">
                           <button type="submit" class="btn btn-primary mb-3">Comment</button>
                         </div>
                     </form>
+
+                    
                 </div>
             </div>
             
@@ -205,55 +207,14 @@
     </div>
 </section>
 {%endblock%}
+
+
 {%block content2%}
-<script>
-function myFunction(id){
-
-    if(document.contains(document.getElementById('newForm'))){
-        document.getElementById('newForm').remove("");
-    }
-
-    var a = document.getElementById(id);
-    var comment_form = '<form class="row g-3" id="newForm" method="post">\
-        {% csrf_token %}\
-        <div class="col-auto">\
-            <select name="parent" class="d-none" id="id_parent"><option value="'+id+'" selected="'+id+'"></option></select>\
-          {{comment_form.content}}\
-        </div>\
-        <div class="col-auto">\
-          <button type="submit" class="btn btn-primary mb-3">Reply</button>\
-        </div>\
-    </form>';
-
-    a.insertAdjacentHTML('afterend',comment_form);
-}
-</script>
 
 
-<script>
-    // ------------------------------------------------------- //
-    //   Inject SVG Sprite - 
-    //   see more here 
-    //   https://css-tricks.com/ajaxing-svg-sprite/
-    // ------------------------------------------------------ //
-    function injectSvgSprite(path) {
+<script src="{% static 'store/js/comment.js' %}"></script>
 
-        var ajax = new XMLHttpRequest();
-        ajax.open("GET", path, true);
-        ajax.send();
-        ajax.onload = function (e) {
-            var div = document.createElement("div");
-            div.className = 'd-none';
-            div.innerHTML = ajax.responseText;
-            document.body.insertBefore(div, document.body.childNodes[0]);
-        }
-    }
-    // this is set to BootstrapTemple website as you cannot 
-    // inject local SVG sprite (using only 'icons/orion-svg-sprite.svg' path)
-    // while using file:// protocol
-    // pls don't forget to change to your domain :)
-    injectSvgSprite('https://bootstraptemple.com/files/icons/orion-svg-sprite.svg');
-</script>
+
 {%endblock%}
 
 

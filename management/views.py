@@ -58,7 +58,7 @@ class ProductEditView(View):
         context = {'product_form':product_form,'specs_formset':specs_formset,'images_formset':images_formset}
         return render(request,self.template,context)
 
-    def post(self,request,slug,*args, **kwargs):
+    def post(self,request,slug):
         product = get_object_or_404(Product,slug=slug)
         product_form = ProductForm(request.POST,instance=product)
         specs_formset = ProductSpecsFormset(request.POST,instance=product,prefix='specs')
@@ -71,6 +71,8 @@ class ProductEditView(View):
             return redirect(product)
         context = {'product_form':product_form,'specs_formset':specs_formset,'images_formset':images_formset}
         return render(request,self.template,context)
+
+
 
 class ProductTypeEditView(View):
     template = 'management/product_type_edit.html'
@@ -101,6 +103,7 @@ class OfferEditView(UpdateView):
     form_class = OfferForm
     success_url = reverse_lazy('management:offers')
     template_name = 'management/edit_offer.html'
+    
 #---------------Creating Items----------------
 #Creat category
 class CategoryCreateView(CreateView):

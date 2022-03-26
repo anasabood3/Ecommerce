@@ -38,10 +38,6 @@ class ProductForm(forms.ModelForm):
     discount_price = forms.CharField(label='Descounted Price')
     is_active = forms.BooleanField(label='Status')
 
-
-
-
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update(
@@ -82,9 +78,9 @@ ProductSpecsFormset = inlineformset_factory(Product,  # parent form
                                                         'specification': _(u'Specification:'),
                                                         'value': _(u'Value:'),
                                                   },
-                                                #   # help texts for the fields
+                                                 # help texts for the fields
                                                   help_texts={'specification':None,'value': None,},
-                                                #   # set to false because cant' delete an non-exsitant instance
+                                                   # set to false because cant' delete an non-exsitant instance
                                                   can_delete=True,
                                                   # how many inline-forms are sent to the template by default
                                                   extra=2,
