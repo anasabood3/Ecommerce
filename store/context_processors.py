@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 def categories(request):
-    return {"categories": Category.objects.filter(level=0)}
+    return {"categories": Category.objects.all()}
 
 
 def wishlist(request):

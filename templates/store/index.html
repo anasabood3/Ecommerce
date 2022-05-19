@@ -1,5 +1,8 @@
 {% extends "base.html" %} {% load static %} {% block title %}Store{% endblock %} {% block content %}
 
+
+
+
 <!--  Modal -->
 <div class="modal fade" id="productView" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -51,10 +54,11 @@
   </div>
 </div>
 
-<!-- HERO SECTION-->
+
 <div class="container">
 
-  <section class="hero bg-cover bg-center d-flex align-items-center">
+<!------------------------ Offers Carousel Start ---------------------- -->
+  <section class="hero bg-cover bg-center d-flex align-items-center pt-3">
     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
       <ol class="carousel-indicators">
         <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -62,11 +66,17 @@
         <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
       </ol>
       <div class="carousel-inner">
+
+        
+
       {%for offer in offers%}
-        <div class="carousel-item active">
-        <h1>{{offer.title}}</h1>
-          <img class="d-block w-100" src="{{ offer.image.url }}" alt="First slide">
+      <div class="carousel-item {% if forloop.first %} active{% endif %} ">
+        <img class="d-block w-100 img-fluid" src="{{ offer.image.url }}" alt="First slide">
+        <div class="carousel-caption d-none d-md-block text-dark">
+          <h1>{{offer.title}}</h1>
+          <p>{{offer.description}}</p>
         </div>
+      </div>
       {%endfor%}
       </div>
       <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -79,7 +89,7 @@
       </a>
     </div>
   </section>
-
+<!------------------------ Offers Carousel End ---------------------- -->
   <!--Let's Be Friends-->
   {% if not request.user.is_authenticated %}
   <section class=" my-3 p-5  border border-5 border-success ">
@@ -108,7 +118,7 @@
     <div class="row">
       {%for c in categories %}
       <div class="col-md-4 mb-4 mb-md-0"><a class="category-item" href="{{ c.get_absolute_url }}"><img class="img-fluid"
-            src="{% static 'store/img/category-2.jpg' %}" alt=""><strong
+        src="{{ c.cover.url }}" alt=""><strong
             class="category-item-title">{{c.name}}</strong></a></div>
       {%endfor%}
     </div>
@@ -337,28 +347,5 @@
 {%endblock%}
 
 {%block conent2%}
-<script>
-  // ------------------------------------------------------- //
-  //   Inject SVG Sprite - 
-  //   see more here 
-  //   https://css-tricks.com/ajaxing-svg-sprite/
-  // ------------------------------------------------------ //
-  function injectSvgSprite(path) {
-
-    var ajax = new XMLHttpRequest();
-    ajax.open("GET", path, true);
-    ajax.send();
-    ajax.onload = function (e) {
-      var div = document.createElement("div");
-      div.className = 'd-none';
-      div.innerHTML = ajax.responseText;
-      document.body.insertBefore(div, document.body.childNodes[0]);
-    }
-  }
-  // this is set to BootstrapTemple website as you cannot 
-  // inject local SVG sprite (using only 'icons/orion-svg-sprite.svg' path)
-  // while using file:// protocol
-  // pls don't forget to change to your domain :)
-  injectSvgSprite('https://bootstraptemple.com/files/icons/orion-svg-sprite.svg');
-</script>
+<script src="{% static 'store/js/index.js' %}"></script>
 {%endblock%}

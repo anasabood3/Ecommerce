@@ -1,55 +1,240 @@
 {% extends "./sub_base.html" %}
-{% block title %}Product Management{% endblock %}
-
+{% block title %}Product Edit{% endblock %}
+{% load static %}
 
 {% block sub_content %}
 
+
+
 <div class="card">
+  <div class="col-lg-12" data-select2-id="6">
+    <!-- Card -->
+    <div class="card mb-3 mb-lg-5  mt-3">
+      <div class="card-header">
+        <h5 class="card-title ">Product Details</h5>
+      </div>
 
-        <div class="col-lg-12 " data-select2-id="6">
-            <!-- Card -->
-            <div class="card mb-3 mb-lg-5">
-                <div class="card-header">
-                    <h5 class="card-title">Product Details</h5>
+      {% if product_form.errors %}
+        {% for field in product_form %} {% if field.errors %}
+        <div class="alert alert-danger m-3" role="alert">
+          {{ field.label }}: {{ field.errors|striptags }}
+        </div>
+        {% endif %} {% endfor %} {% endif %} 
+
+        {% if product_specs_formset.errors %}
+        {% for field in product_specs_formset %} {% if field.errors %}
+        <div class="alert alert-danger m-3" role="alert">
+          {{ field.label }}: {{ field.errors|striptags }}
+        </div>
+        {% endif %} {% endfor %} {% endif %}
+        
+        {% if images_formset.errors %}
+        {% for field in images_formset %} {% if field.errors %}
+        <div class="alert alert-danger m-3" role="alert">
+          {{ field.label }}: {{ field.errors|striptags }}
+        </div>
+        {% endif %} {% endfor %} {% endif %}
+
+      <!-- Body -->
+      <div class="card-body">
+        {{ product_form.non_form_errors }}
+
+        <form method="post"
+        enctype="multipart/form-data"
+        novalidate
+        >
+  
+            {%csrf_token%}
+          <div class="row">
+              
+            <div class="col-lg-12 form-group">
+              <label class="text-small" for="id_title" >Name</label>
+              {{product_form.title}}
+            </div>
+
+            <div class="col-lg-12 form-group">
+                <label class="text-small" for="id_category" >Category</label>
+                {{product_form.category}}
+              </div>
+
+
+            <div class="col-lg-12 form-group">
+                <label class="text-small" for="id_product_type" >Product Type</label>
+                {{product_form.product_type}}
+              </div>
+
+            <div class="col-lg-12 form-group">
+            <label class="text-small" for="id_description" >Description</label>
+            {{product_form.description}}
+            </div>
+            
+            <div class="col-lg-12 form-group">
+            <label class="text-small" for="id_regular_price" >Regular Price</label>
+            {{product_form.regular_price}}
+            </div>
+            
+            <div class="col-lg-12 form-group">
+                <label class="text-small" for="id_discount_price" >Discount Price</label>
+                {{product_form.discount_price}}
                 </div>
 
-                <!-- Body -->
-                <div class="card-body" data-select2-id="4">
-                    {% if user_form.errors %}
-                    <p>Please correct the following errors:</p>
-                    {% for field in user_form %}
-                    {% if field.errors %}
-                    <div class="alert alert-primary" role="alert">
-                        {{ field.label }}: {{ field.errors|striptags }}
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                    {% endif %}
-                    {%if messages%}
-                    <div class="alert alert-success" role="alert">
-                    {% for msg in messages %}
-                    {{msg}}
-                    
-                    {% endfor%}
-                    </div>
-                    {%endif%}
-                    <form method="post"  id="ProductEditForm" enctype="multipart/form-data" novalidate>
-                        {%csrf_token%}
-                        <!-- Form Group -->
-                        <div class="row form-group">
-                            <div class="col-sm-9">
-                                {{product_form.as_p}}
-                                {{specs_formset.as_p}}
-                                 {{images_formset.as_p}}
-                            </div>
-                        </div>
-                        <!-- End Form Group>
-                        <!-- Footer -->
-                        <div class="card-footer d-flex justify-content-end">
-                            <button class="btn btn-primary" type="submit" id="saveChanges">Save</button>
-                        </div>
-                        <!-- End Footer -->
-                    </form>
-                </div>
-                <!-- End Body -->
-            {% endblock %}
+            <div class="col-lg-12 form-group d-flex ">
+                <label class="text-large" for="id_is_active">Status</label>
+                {{product_form.is_active}}
+            </div>
+
+
+            {{ product_specs_formset.non_form_errors }}
+
+            {{ product_specs_formset.management_form }}
+
+
+            <div class="col-lg-12 form-group">
+              <label class="text-md" for="id_name" >Manage Product Specifications</label>
+
+              
+              
+              <div class="table-responsive">
+                <div class="table-wrapper">
+
+                    <table class="table" id="specs-form">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Specification</th>
+                                <th>Value</th>
+                                <th>Delete?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          {% for form2 in product_specs_formset %}
+                          <tr class="specs-form-item {{ product_specs_formset.prefix }}">
+                            <td class="original d-none">
+                              {% for hidden in form2.hidden_fields %}
+                              {{ hidden }} 
+                              {% endfor %}
+                            </td>
+                            <td class="field-name">
+                              {{ form2.specification }}
+                            </td>
+                            <td class="field-value">
+                              {{ form2.value }}
+                            </td>
+                            <td class="delete">
+                                {{ form2.DELETE }}
+                              </td>
+                          </tr>
+                          {% endfor %}
+
+                          <tr id="empty-form" class="specs-form-item {{ product_specs_formset.prefix }} hidden">
+                            <td class="original d-none">
+                              {% for hidden in product_specs_formset.empty_form.hidden_fields %}
+                              {{ hidden }} 
+                              {% endfor %}
+                            </td>
+                            <td class="field-name">
+                              {{ product_specs_formset.empty_form.specification }}
+                            </td>
+                            <td class="delete">
+                                {{ product_specs_formset.empty_form.value }}
+                            </td>
+                            <td class="delete">
+                              
+                            </td>
+                          </tr>
+
+                        </tbody>
+                        <caption> <button class="btn btn-dark btn-sm"  id="add-more-specs"><i class="fa fa-plus" aria-hidden="true"></i></button></caption>
+                    </table>
+
+            </div>
+            
+
+
+
+
+            {{ images_formset.non_form_errors }}
+
+            {{ images_formset.management_form }}
+
+
+            <div class="col-lg-12 form-group">
+                <label class="text-md" for="id_name" >Manage Product Images</label>
+  
+                
+                
+                <div class="table-responsive">
+                  <div class="table-wrapper">
+  
+                      <table class="table" id="images-form">
+                          <thead class="thead-dark">
+                              <tr>
+                                  <th>Image</th>
+                                  <th>Alternative Text</th>
+                                  <th>Is Feature</th>
+                                  <th>Delete?</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                            {% for form2 in images_formset %}
+                            <tr class="images-form-item {{ images_formset.prefix }}">
+                              <td class="original d-none">
+                                {% for hidden in form2.hidden_fields %}
+                                {{ hidden }} 
+                                {% endfor %}
+                              </td>
+                              <td class="field-image">
+                                {{ form2.image }}
+                              </td>
+                              <td class="field-alt_text">
+                                {{ form2.alt_text }}
+                              </td>
+                              <td class="field-is_feature">
+                                {{ form2.is_feature }}
+                              </td>
+                              <td class="delete">
+                                  {{ form2.DELETE }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+  
+                            <tr id="empty-form2" class="images-form-item {{ images_formset.prefix }} d-none">
+                                <td class="original d-none">
+                                    {% for hidden in form2.hidden_fields %}
+                                    {{ hidden }} 
+                                    {% endfor %}
+                                  </td>
+                                  <td class="field-image">
+                                    {{ images_formset.empty_form.image }}
+                                  </td>
+                                  <td class="field-alt_text">
+                                    {{ images_formset.empty_form.alt_text }}
+                                  </td>
+                                  <td class="field-is_feature">
+                                    {{ images_formset.empty_form.is_feature }}
+                                  </td>
+                                  <td class="delete">
+                                      {{ images_formset.empty_form.DELETE }}
+                                    </td>
+                            </tr>
+  
+                          </tbody>
+                          <caption> <button class="btn btn-dark btn-sm"  id="add-more-images"><i class="fa fa-plus" aria-hidden="true"></i></button></caption>
+                      </table>
+              </div>
+
+            <div class="col-lg-12 form-group d-flex justify-content-end">
+              <button class="btn btn-warning" type="submit" id="saveChanges">Save Changes</button>
+            </div>
+        </form>
+      </div>
+      <!-- End Body -->
+
+      <!------------ Scripts----------------- -->
+      <script src="{% static 'store/vendor/jquery/jquery.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'management/js/form_set_manage.js' %}"></script>
+      <!------------ Scripts----------------->
+      
+      {% endblock %}
+    </div>
+  </div>
+</div>

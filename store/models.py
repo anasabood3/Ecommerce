@@ -3,8 +3,12 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from account.models import UserBase
+from .unique_slugify import unique_slugify
+from django_resized import ResizedImageField
+
 
 class Category(MPTTModel):
     """
@@ -17,8 +21,20 @@ class Category(MPTTModel):
         max_length=255,
         unique=True,
     )
+
+    cover = ResizedImageField(
+        size=[1080, 1920],
+        crop=['top', 'left'],
+        verbose_name=_("image"),
+        help_text=_("Upload an Offer image"),
+        upload_to="images/",
+        default="images/default.png",
+    )
+
     slug = models.SlugField(verbose_name=_("Category safe URL"), max_length=255, unique=True)
-    parent = TreeForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="children")
+    
+    parent = TreeForeignKey("self", on_delete=models.CASCADE, null=True,blank=True, related_name="children")
+    
     is_active = models.BooleanField(default=True)
 
     class MPTTMeta:
@@ -40,6 +56,10 @@ class Category(MPTTModel):
         
     def get_delete_url(self):
         return reverse("management:delete_category",args=[self.slug])
+
+    def save(self,*args, **kwargs):
+        unique_slugify(self,self.name)
+        super().save(*args, **kwargs)
 
 
 class ProductType(models.Model):
@@ -70,7 +90,7 @@ class ProductSpecification(models.Model):
     specifiction or features for the product types.
     """
 
-    product_type = models.ForeignKey(ProductType, on_delete=models.RESTRICT)
+    product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE)
     name = models.CharField(verbose_name=_("Name"), help_text=_("Required"), max_length=255)
 
     class Meta:
@@ -145,7 +165,10 @@ class Product(models.Model):
     def added_to_wishlist(self,user_id):
         product_state = (Product.users_wishlist.through.objects.filter(product_id = self.id, userbase_id = user_id).exists())
         return product_state
-    
+
+    def save(self,*args, **kwargs):
+        unique_slugify(self,self.title)
+        super().save(*args, **kwargs)
 
     
     
@@ -178,12 +201,17 @@ class ProductImage(models.Model):
     """
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_image")
-    image = models.ImageField(
-        verbose_name=_("image"),
+    # image = models.ImageField(
+    #     verbose_name=_("image"),
+    #     help_text=_("Upload a product image"),
+    #     upload_to="images/",
+    #     default="images/thumbnail.jpg",
+    # )
+    image = ResizedImageField(size=[200, 500],  verbose_name=_("image"),
         help_text=_("Upload a product image"),
         upload_to="images/",
-        default="images/thumbnail.jpg",
-    )
+        default="images/thumbnail.jpg",)
+
     alt_text = models.CharField(
         verbose_name=_("Alturnative text"),
         help_text=_("Please add alturnative text"),
@@ -199,20 +227,28 @@ class ProductImage(models.Model):
         verbose_name = _("Product Image")
         verbose_name_plural = _("Product Images")
 
+
+
+
 class Offer(models.Model):
     # Caroussel Offers
     title = models.CharField(verbose_name=_("Title"), help_text=_("Required"), max_length=40)
     description = models.CharField(verbose_name=_("Description"),help_text=_("Short As Possiable"),max_length=90)
-    image = models.ImageField(
+    image = ResizedImageField(
+        size=[1080, 1920],
         verbose_name=_("image"),
         help_text=_("Upload an Offer image"),
         upload_to="images/",
         default="images/default.png",
     )
-    slug = models.SlugField(max_length=40)
+    slug = models.SlugField(max_length=40,blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
-
+    is_active = models.BooleanField(
+        verbose_name=_("Offer visibility"),
+        help_text=_("Change Offer visibility"),
+        default=False,
+    )
     class Meta:
         verbose_name = _("Offer")
         verbose_name_plural = _("Offers")
@@ -224,6 +260,14 @@ class Offer(models.Model):
     
     def get_delete_url(self):
         return reverse("management:delete_offer",args=[self.slug])
+        
+    def save(self,*args, **kwargs):
+        unique_slugify(self,self.title)
+        super().save(*args, **kwargs)
+
+
+
+
 
 
 class Comment(MPTTModel):
@@ -243,8 +287,29 @@ class Comment(MPTTModel):
 
     def __str__(self):
         return f"Comment By{self.user}"
-
+    @property
     def is_parent(self):
         if self.parent is None:
             return True
         return False
+
+
+
+
+
+class Rate(models.Model):
+    '''
+    User Rates for a Specific product
+    '''
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name="rates")
+    user = models.ForeignKey(UserBase,on_delete=models.CASCADE)
+    user_name = models.CharField(max_length=30,default="Unknown")
+    rate_value = models.IntegerField(default=0,validators=[
+            MaxValueValidator(5),
+            MinValueValidator(0)
+        ])
+    rating_date = models.DateField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"{self.product} Rated {self.rate_value} By{self.user}"

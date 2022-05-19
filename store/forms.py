@@ -31,6 +31,6 @@ class CommentForm(forms.ModelForm):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['parent'].required=False
-        self.fields['parent'].widget.attrs.update(
-            {'class':'d-none'}
-        )
+        # self.fields['parent'].widget.attrs.update(
+        #     {'class':'d-none'}
+        # )

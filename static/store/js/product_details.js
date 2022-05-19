@@ -48,5 +48,58 @@ $(document).ready(
         }
 
         })
+    
     });
+
+    // $('#rate_input').on('keyup',console.log('Hello/'))
+  }
+  
+
+  );
+
+
+
+  function ViewProductDetails(product_id){
+    $.ajax({
+      url: "",
+      type: 'get',
+      data: {
+        "product":product_id,
+        "action":"quick_view",},
+      success: function (response) {
+        $("#quickmodal").find("#product_title").text(response.title);
+        $("#quickmodal").find("#product_price").text(response.price);
+        $("#quickmodal").find("#product_description").text(response.description);
+        $("#quickmodal").append("<img src="+response.image+">");
+        console.log(response.image);
+        $("#quickmodal").modal('show');
+      },
+      // handle a non-successful response
+      error: function (xhr, errmsg, err) {
+        alert("Error !!!")
+    }
+    });
+  }
+
+  function RateProduct(rate_value){
+    var csrf = $("input[name=csrfmiddlewaretoken]").val();
+    $.ajax({
+      url: "",
+      type: "POST",
+      data:{
+          rate:rate_value,
+          action: "rate",
+          csrfmiddlewaretoken: csrf
+
+      },
+
+      // handle a successful response
+      success: function (response) {
+
+      },
+      // handle a non-successful response
+      error: function (xhr, errmsg, err) {
+          alert("Error !!!")
+      }
   });
+  }

@@ -20,12 +20,11 @@
                         <button class="close p-4" type="button" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">×</span></button>
                         <div class="p-5 my-md-4">
+                            
                             <ul class="list-inline mb-2">
-                                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
+                                
+                                <li class="list-inline-item m-0">{{product_rate}}<i class="fas fa-star small text-warning"></i></li>
+                     
                             </ul>
                             <h2 class="h4">{{product.title}}</h2>
                             <p class="text-muted">$250</p>
@@ -101,6 +100,7 @@
                 <h1>{{product.title}}</h1>
                 <p class="text-muted lead">${{product.regular_price}}</p>
                 <p class="text-small mb-4">{{product.description}}</p>
+                <p class="text-small mb-4">{{product_rate}}</p>
                 {% if request.user.is_authenticated %}
                 <button data-pid={{product.id}} data-url="{% url "account:users_wishlist" %}"
                     class="btn btn-link text-dark p-0 mb-4 "id="add_to_wishlist"><i class="far fa-heart mr-2"></i>
@@ -118,6 +118,8 @@
                     <li class="px-3 py-2 mb-1 bg-white text-muted"><strong
                             class="text-uppercase text-dark">Tags:</strong><a class="reset-anchor ml-2"
                             href="#">Innovation</a></li>
+                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong
+                        class="text-uppercase text-dark">Rate The Poduct:</strong><input id="rate_input" type="text" max="5" min="0"></li>
                 </ul>
             </div>
         </div>
@@ -164,7 +166,7 @@
                         {%endrecursetree%}
                     </div>
                     <!--input form-->
-                    <form class="row g-3" method='post' id="comment_form" onsubmit="event.preventDefault(); comment('comment_form');">
+                    <form class="row g-3" method='post' id="comment_form">
                         {% csrf_token %}
                         <div class="col-auto">
                           

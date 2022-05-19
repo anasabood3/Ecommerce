@@ -11,19 +11,21 @@ from django.utils.translation import ugettext as _
 
 #-------------Category Forms-------------------
 class CategoryForm(forms.ModelForm):
-    name = forms.CharField(label='Category Name:',min_length=4,max_length=60)
-    slug = forms.CharField(label='Slug:',help_text='Represents Your product name in URL',min_length=4,max_length=60)
-    is_active = forms.BooleanField(label='Status:',help_text='Control yor product vissablity on the store')
+    name = forms.CharField(label='Category Name',min_length=4,max_length=60)
+    cover = forms.ImageField(label='Cover Image')
+    # parent= forms.ChoiceField(label='Category',required=False)
+    is_active = forms.BooleanField(label='Status',help_text='Control yor product vissablity on the store')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args,**kwargs)
-        self.fields['name'].widget.attrs.update({'class':'form-control'})
-        self.fields['slug'].widget.attrs.update({'class':'form-control'})
-        self.fields['is_active'].widget.attrs.update({'class':'form-control'})
+        self.fields['name'].widget.attrs.update({'class':'form-control form-control-md'})
+        self.fields['parent'].widget.attrs.update({'class':'form-control form-control-md'})
+        self.fields['cover'].widget.attrs.update({'class':'custom-file-input'})
+        self.fields['is_active'].widget.attrs.update({'class':'form-control form-control-sm'})
 
     class Meta:
         model = Category
-        fields = ('name','slug','is_active')
+        fields = ('name','cover','is_active','parent')
 
 #---------Product Forms------------
 #Manage Product Form
@@ -33,7 +35,6 @@ class ProductForm(forms.ModelForm):
     # category = forms.ChoiceField(label='Category',)
     # product_type = forms.ChoiceField(label="Product Type")
     description = forms.CharField(label='Description')
-    slug = CharField(label='Slug',help_text="No Spaces")
     regular_price = CharField(label="Formal Price")
     discount_price = forms.CharField(label='Descounted Price')
     is_active = forms.BooleanField(label='Status')
@@ -45,14 +46,13 @@ class ProductForm(forms.ModelForm):
         self.fields['category'].widget.attrs.update({'class': 'form-control'})
         self.fields['product_type'].widget.attrs.update({'class': 'form-control'})
         self.fields['description'].widget.attrs.update({'class': 'form-control'})
-        self.fields['slug'].widget.attrs.update({'class': 'form-control'})
         self.fields['regular_price'].widget.attrs.update({'class': 'form-control'})
         self.fields['discount_price'].widget.attrs.update({'class': 'form-control'})
         self.fields['is_active'].widget.attrs.update({'class': 'form-control'})
         
     class Meta:
         model = Product
-        fields = ('title','category','product_type','description','slug','regular_price','discount_price','is_active',)
+        fields = ('title','category','product_type','description','regular_price','discount_price','is_active',)
 
 
 
@@ -109,19 +109,21 @@ ProductImagesFormset = inlineformset_factory(Product,  # parent form
 class ProductTypeForm(forms.ModelForm):
     name = forms.CharField(label="Name")
     is_active = forms.BooleanField(label="Status")
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['name'].widget.attrs.update(
-            {'class': 'form-control'})
-        self.fields['is_active'].widget.attrs.update({'class': 'form-control'})
+        self.fields['name'].widget.attrs.update({'class': 'form-control form-control-md'})
+        self.fields['is_active'].widget.attrs.update({'class': 'form-control form-control-md'})
+    
     class Meta:
         model = ProductType
         fields = ['name','is_active']
 
+
 ProductTypeFormset = inlineformset_factory(ProductType,  # parent form
                                                   ProductSpecification,  # inline-form
                                                   fields=['name'], 
-                                                  widgets = {'name': forms.TextInput(attrs = {'class': 'form-control', 'placeholder': 'Product Type Name'})},
+                                                  widgets = {'name': forms.TextInput(attrs = {'class': 'form-control form-control-md', 'placeholder': 'Product Specification Name'})},
                                                   labels={
                                                         'name': _(u'Name:'),
                                                   },
@@ -129,13 +131,26 @@ ProductTypeFormset = inlineformset_factory(ProductType,  # parent form
                                                         'name': None,
                                                   },
                                                   can_delete=True,
-                                                  extra=1
+                                                  extra=0
                                                   )
+
+
+
+
 class OfferForm(forms.ModelForm):
     title = forms.CharField(label='Title', min_length=4, max_length=255)
     description = forms.CharField(label='Description')
-    slug = CharField(label='Slug',help_text="No Spaces")
-    image = ImageField(label='Offer Image',help_text="Keep It Simple")
+    image = ImageField(label='Cover Image')
+    is_active = forms.BooleanField(label='Status',help_text='Control yor product vissablity on the store',required=False)
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['title'].widget.attrs.update({'class':'form-control form-control-lg'})
+        self.fields['description'].widget.attrs.update({'class':'form-control form-control-lg'})
+        self.fields['image'].widget.attrs.update({'class':'form-control form-control-lg'})
+        self.fields['is_active'].widget.attrs.update({'class':'form-control form-control-sm'})
+ 
     class Meta:
         model = Offer
-        fields=['title','description','image','slug']
+        fields=['title','description','image','is_active']

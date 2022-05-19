@@ -16,27 +16,30 @@ from django.contrib import messages
 #List Products
 class ProductListView(ListView):
     model = Product
-    paginate_by = 2
+    paginate_by = 8
     context_object_name = 'products'
     template_name = 'management/product_list.html'
     
 #List Categories
 class CategoryListView(ListView):
     model = Category
+    paginate_by = 8
     context_object_name = 'categories'
     template_name = 'management/category_list.html'
 
 #List Products
 class ProductTypeListView(ListView):
-        model = ProductType
-        context_object_name = 'product_types'
-        template_name = 'management/product_type_list.html'
+    model = ProductType
+    paginate_by = 8
+    context_object_name = 'product_types'
+    template_name = 'management/product_type_list.html'
 
 #List Offers
 class OfferListView(ListView):
-        model = Offer
-        context_object_name = 'offers'
-        template_name = 'management/offers_list.html'
+    model = Offer
+    context_object_name = 'offers'
+    paginate_by = 8
+    template_name = 'management/offers_list.html'
 
 #---------------Editing Items---------------
 #Category Edit Generic Class Based
@@ -44,6 +47,7 @@ class CategoryEditView(UpdateView):
     model = Category
     form_class = CategoryForm
     template_name = 'management/edit_category.html'
+    success_url = reverse_lazy('management:categories')
 
 
 
@@ -53,23 +57,23 @@ class ProductEditView(View):
     def get(self,request,slug,*args, **kwargs):
         product = get_object_or_404(Product,slug=slug)
         product_form = ProductForm(instance=product)
-        specs_formset = ProductSpecsFormset(instance=product,prefix='specs')
+        specs_formset = ProductSpecsFormset(instance=product,prefix='productspecification_set')
         images_formset = ProductImagesFormset(instance=product,prefix='images')
-        context = {'product_form':product_form,'specs_formset':specs_formset,'images_formset':images_formset}
+        context = {'product_form':product_form,'product_specs_formset':specs_formset,'images_formset':images_formset}
         return render(request,self.template,context)
 
     def post(self,request,slug):
         product = get_object_or_404(Product,slug=slug)
         product_form = ProductForm(request.POST,instance=product)
-        specs_formset = ProductSpecsFormset(request.POST,instance=product,prefix='specs')
+        specs_formset = ProductSpecsFormset(request.POST,instance=product,prefix='productspecification_set')
         images_formset = ProductImagesFormset(request.POST,request.FILES,instance=product,prefix='images')
         if product_form.is_valid() and specs_formset.is_valid() and images_formset.is_valid():
             product_form.save()
             specs_formset.save()
             images_formset.save()
             messages.success(request,"Changes were saved successfully")
-            return redirect(product)
-        context = {'product_form':product_form,'specs_formset':specs_formset,'images_formset':images_formset}
+            return redirect("management:products")
+        context = {'product_form':product_form,'product_specs_formset':specs_formset,'images_formset':images_formset}
         return render(request,self.template,context)
 
 
@@ -79,22 +83,23 @@ class ProductTypeEditView(View):
     def get(self,request,product_type_id,*args, **kwargs):
         product_type = get_object_or_404(ProductType,pk=product_type_id)
         product_type_form = ProductTypeForm(instance=product_type)
-        specs_formset = ProductTypeFormset(instance=product_type,prefix='specs')
-        context = {'product_type_form':product_type_form,'product_specs_formset':specs_formset}
-        print("get again")
+        specs_formset = ProductTypeFormset(instance=product_type,prefix='productspecification_set')
+        context = {'form':product_type_form,'product_specs_formset':specs_formset}
         return render(request,self.template,context)
 
     def post(self,request,product_type_id,*args, **kwargs):
-        print("post again")
         product_type = get_object_or_404(ProductType,pk=product_type_id)
         product_type_form = ProductTypeForm(request.POST,instance=product_type)
-        specs_formset = ProductTypeFormset(request.POST,instance=product_type,prefix='specs')
+        specs_formset = ProductTypeFormset(request.POST,instance=product_type,prefix='productspecification_set')
+
         if product_type_form.is_valid() and specs_formset.is_valid():
             product_type_form.save()
             specs_formset.save()
             messages.success(request,"Changes were saved successfully")
-        context = {'product_type_form':product_type_form,'product_specs_formset':specs_formset}
-        return render(request,self.template,context)
+            return redirect("management:product_types")
+        else:
+            context = {'form':product_type_form,'product_specs_formset':specs_formset}
+            return render(request,self.template,context)
 
 
 #Offer Edit using Generic View
@@ -110,6 +115,7 @@ class CategoryCreateView(CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'management/edit_category.html'
+    success_url = reverse_lazy('management:categories')
 
     def form_valid(self, form):
         messages.add_message(
@@ -124,7 +130,7 @@ class CategoryCreateView(CreateView):
 def create_product(request):
     if request.method == "POST":
         product_form = ProductForm(request.POST)
-        specs_formset = ProductSpecsFormset(request.POST,instance=product_form.instance,prefix='specs')
+        specs_formset = ProductSpecsFormset(request.POST,instance=product_form.instance,prefix='productspecification_set')
         images_formset = ProductImagesFormset(request.POST,request.FILES,instance=product_form.instance,prefix='images')
 
         if product_form.is_valid():
@@ -135,9 +141,9 @@ def create_product(request):
                 messages.success(request,"Changes were saved successfully")
     else:
         product_form = ProductForm()
-        specs_formset = ProductSpecsFormset(prefix='specs')
+        specs_formset = ProductSpecsFormset(prefix='productspecification_set')
         images_formset = ProductImagesFormset(prefix='images')
-    return render(request, "management/edit_product.html", {"product_form": product_form,'specs_formset':specs_formset,'images_formset':images_formset})
+    return render(request, "management/edit_product.html", {"product_form": product_form,'product_specs_formset':specs_formset,'images_formset':images_formset})
 
 
 class ProductTypeCreateView(CreateView):
@@ -167,6 +173,11 @@ class ProductTypeCreateView(CreateView):
         for meta in product_specs:
             meta.product_type = self.object
             meta.save()
+        messages.add_message(
+            self.request, 
+            messages.SUCCESS,
+            'Changes were succesfully saved'
+        )
         
 
         return redirect(reverse("management:product_types"))
@@ -210,7 +221,7 @@ class ProductDeleteView(DeleteView):
 #Delete Category
 class CategoryDeleteView(DeleteView):
     model = Category
-    success_url = '/'
+    success_url = reverse_lazy('management:categories')
     template_name = 'management/delete_item.html'
     def form_valid(self, form):
         messages.add_message(
@@ -223,7 +234,7 @@ class CategoryDeleteView(DeleteView):
 #Delete Product Type
 class ProductTypeDeleteView(DeleteView):
     model = ProductType
-    success_url = '/'
+    success_url = reverse_lazy('management:product_types')
     template_name = 'management/delete_item.html'
     pk_url_kwarg = "product_type_id"
     def form_valid(self, form):
@@ -235,7 +246,7 @@ class ProductTypeDeleteView(DeleteView):
 
 class OfferDeleteView(DeleteView):
     model = Offer
-    success_url = '/'
+    success_url = reverse_lazy('management:offers')
     template_name = 'management/delete_item.html'
     def form_valid(self, form):
         messages.add_message(
