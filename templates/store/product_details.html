@@ -1,70 +1,17 @@
 {% extends "../base.html" %}
 {% load static %}
 {% block title %}{% if product %}{{ product.title }}{% else %}Product{% endif %}{% endblock %}
+{%load mptt_tags%}
+
 
 {%block content%}
-
-<!--  Modal -->
-<div class="modal fade" id="productView" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body p-0">
-                <div class="row align-items-stretch">
-                    <div class="col-lg-6 p-lg-0"><a class="product-view d-block h-100 bg-cover bg-center"
-                            style="background: url(img/product-5.jpg)" href="img/product-5.jpg"
-                            data-lightbox="productview" title="Red digital smartwatch"></a><a class="d-none"
-                            href="img/product-5-alt-1.jpg" title="Red digital smartwatch"
-                            data-lightbox="productview"></a><a class="d-none" href="img/product-5-alt-2.jpg"
-                            title="Red digital smartwatch" data-lightbox="productview"></a></div>
-                    <div class="col-lg-6">
-                        <button class="close p-4" type="button" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">×</span></button>
-                        <div class="p-5 my-md-4">
-                            
-                            <ul class="list-inline mb-2">
-                                
-                                <li class="list-inline-item m-0">{{product_rate}}<i class="fas fa-star small text-warning"></i></li>
-                     
-                            </ul>
-                            <h2 class="h4">{{product.title}}</h2>
-                            <p class="text-muted">$250</p>
-                            <p class="text-small mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut
-                                ullamcorper leo, eget euismod orci. Cum sociis natoque penatibus et magnis dis
-                                parturient montes nascetur ridiculus mus. Vestibulum ultricies aliquam convallis.</p>
-                            <div class="row align-items-stretch mb-4">
-                                <div class="col-sm-7 pr-sm-0">
-                                    <div class="border d-flex align-items-center justify-content-between py-1 px-3">
-                                        <span class="small text-uppercase text-gray mr-4 no-select">Quantity</span>
-                                        <div class="quantity">
-                                            <button class="dec-btn p-0"><i class="fas fa-caret-left"></i></button>
-                                            <input class="form-control border-0 shadow-0 p-0" type="text" value="1">
-                                            <button class="inc-btn p-0"><i class="fas fa-caret-right"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-5 pl-sm-0"><a
-                                        class="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0"
-                                        href="cart.html">Add to cart</a></div>
-                            </div><a class="btn btn-link text-dark p-0" href="#"><i class="far fa-heart mr-2"></i>Add to
-                                wish list</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<section class="py-5">
-    <div class="container">
-
-        <div  id="wishlist_alerts" class="alert alert-info" role="alert" hidden>
-            
-        </div>
-
+<section class=" my-3 border">
+    {% csrf_token %}
         <div class="row mb-5">
-            <div class="col-lg-6">
 
+            <!-- product image slider -->
+
+            <div class="col-lg-6">
                 <!-- PRODUCT SLIDER-->
                 <div class="row m-sm-0">
                     <div class="col-sm-2 p-sm-0 order-2 order-sm-1 mt-2 mt-sm-0">
@@ -88,8 +35,13 @@
                     </div>
                 </div>
             </div>
+
+
             <!-- PRODUCT DETAILS-->
             <div class="col-lg-6">
+
+
+                <!-- Product Rating -->
                 <ul class="list-inline mb-2">
                     <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
                     <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
@@ -97,91 +49,141 @@
                     <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
                     <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
                 </ul>
+
+
+                <!-- Product General Details -->
                 <h1>{{product.title}}</h1>
                 <p class="text-muted lead">${{product.regular_price}}</p>
                 <p class="text-small mb-4">{{product.description}}</p>
                 <p class="text-small mb-4">{{product_rate}}</p>
+
+                <!-- Product Wishlist -->
                 {% if request.user.is_authenticated %}
-                <button data-pid={{product.id}} data-url="{% url "account:users_wishlist" %}"
-                    class="btn btn-link text-dark p-0 mb-4 "id="add_to_wishlist"><i class="far fa-heart mr-2"></i>
+                <button data-pid="{{product.slug}}" class="btn btn-outline-danger btn-sm " id="add_to_wishlist">
                     {% if product_state %}
-                    <span>Remove from wishlist</span></button>
-                    {% else %}
-                    <span>Add to wishlist</span></button>
+                    <i class="fa fa-heart"></i> <span>Wishlist</span> </button>
+                {% else %}
+                <i class="far fa-heart"></i> <span>Wishlist</span> </button>
+                {% endif %}
                     {% endif %}
- {% endif %}
-                {% csrf_token %}<br>
+
+                <br>
+
                 <ul class="list-unstyled small d-inline-block">
-                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong
-                            class="text-uppercase text-dark">Category:</strong><a class="reset-anchor ml-2"
-                            href="#">{{product.category}}</a></li>
-                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong
-                            class="text-uppercase text-dark">Tags:</strong><a class="reset-anchor ml-2"
-                            href="#">Innovation</a></li>
-                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong
-                        class="text-uppercase text-dark">Rate The Poduct:</strong><input id="rate_input" type="text" max="5" min="0"></li>
+                
+                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Category:</strong><a
+                            class="reset-anchor ml-2" href="#">{{product.category}}</a></li>
+                
+                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Tags:</strong><a
+                            class="reset-anchor ml-2" href="#">Innovation</a></li>
+                
+                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Rate The
+                            Poduct:</strong><input id="rate_input" type="text" max="5" min="0"></li>
+                
                 </ul>
+
+
             </div>
         </div>
+
+
         <!-- DETAILS TABS-->
-        <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
+        <ul class="nav nav-tabs mx-3" id="myTab" role="tablist">
             <li class="nav-item"><a class="nav-link active" id="description-tab" data-toggle="tab" href="#description"
                     role="tab" aria-controls="description" aria-selected="true">Description</a></li>
             <li class="nav-item"><a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab"
                     aria-controls="reviews" aria-selected="false">Reviews</a></li>
         </ul>
+        
+        <!-- Product Specifications Tab -->
         <div class="tab-content mb-5" id="myTabContent">
             <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
-                <div class="p-4 p-lg-5 bg-white">
-                    <h6 class="text-uppercase">Product Specifications </h6>
-                    <ul class="list-group">
-                        {%for item in product_specs%}
-                            <li class="list-group-item"><p class="font-weight-bold">{{item.name}}</p>: {{item.value}}</li>
-                        {%endfor%}
-                        </ul>
+                <div class="p-4 p-lg-5">
+                    <div class="table-responsive">
+                        <div class="table-wrapper">
+        
+                            <table class="table table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Product Specifications</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in product_specs %}
+                                    <tr class="specs-item">
+                                        <th class="field-name">
+                                            {{item.name}}
+                                        </th>
+                                        <td class="field-value">
+                                            {{ item.value }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+        
                 </div>
             </div>
-            
+            <!-- Product Reviews Tab -->
             <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                 <div class="p-4 p-lg-5 bg-white">
-                    <div class="row" id="comments_section">
-                        {%load mptt_tags%}
+            
+                    <div class="row d-flex flex-column" id="comments_section">
+            
                         {%recursetree comments%}
-                        <div class="col-lg-8 border border-primary">
-                            <div class="media mb-3"><img class="rounded-circle" src="https://www.w3schools.com/howto/img_avatar.png" alt="" width="50">
-                                <div class="media-body ml-3">
-                                    <h6 class="mb-0 text-uppercase">{{node.user_name}}</h6>
-                                    <p class="small text-muted mb-0 text-uppercase">{{node.publish_date}}</p>
-                                    <p class="text-small mb-0 text-muted" id="{{node.id}}">{{node.content}}</p>
-                                </div>
-                                {%if node.level < 1%}
-                                <button class="button" onclick="create_reply({{node.id}})">Reply</button>
+            
+                        <div class="media mb-3" id="{{node.id}}">
+                            <img class="rounded-circle" src="https://cdn.pixabay.com/photo/2021/02/27/16/25/woman-6055084__340.jpg"
+                                alt="" width="50">
+                            <div class="media-body ml-3">
+                                <h6 class="text-info text-small mb-0 text-uppercase">{{node.user_name}}</h6>
+                                <p class="text-small text-muted mb-0">{{node.publish_date}}</p>
+                                <p class="mb-0">{{node.content}}</p>
+                            </div>
+                            {%if node.level < 1%} <button type="button" onclick="create_reply({{node.id}})"
+                                class="btn btn-outline-primary btn-sm d-flex justify-content-end">Reply</button>
                                 {%endif%}
+                        </div>
 
-                                {%if not node.is_leafe_node%}
-                               {{children}}
-                                {%endif%}
+                        {%if not node.is_leafe_node%}
+                        <div class="m-3 ml-5">
+                            {{children}}
+                        </div>
+                        {%endif%}
+
+                        {%endrecursetree%}
+            
+                        <div class="card shadow-sm border-0 bg-light my-1">
+                            <div class="card-body">
+                                <form method='post' id="comment_form">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <input type="text" name='content' class="form-control form-control-sm" id="id_content" placeholder="Add Comment ...">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">Comment</button>
+                                </form>
                             </div>
                         </div>
-                        {%endrecursetree%}
-                    </div>
-                    <!--input form-->
-                    <form class="row g-3" method='post' id="comment_form">
-                        {% csrf_token %}
-                        <div class="col-auto">
-                          
-                          {{comment_form.content}}
-                        </div>
-                        <div class="col-auto">
-                          <button type="submit" class="btn btn-primary mb-3">Comment</button>
-                        </div>
-                    </form>
 
-                    
+                    </div>
+            
+                    <div>
+                    </div>
                 </div>
             </div>
-            
+
         </div>
+
+
+
+
+
+
+
         <!-- RELATED PRODUCTS-->
         {% comment %} <h2 class="h5 text-uppercase mb-4">Related products</h2>
         <div class="row">
@@ -206,17 +208,16 @@
                 </div>
             </div>
         </div> {% endcomment %}
-    </div>
 </section>
 {%endblock%}
 
 
+
+
+
+
 {%block content2%}
-
-
 <script src="{% static 'store/js/comment.js' %}"></script>
-
-
 {%endblock%}
 
 

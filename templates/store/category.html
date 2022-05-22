@@ -55,7 +55,7 @@
                             <p class="text-muted" id='product_price'></p>
                             <p class="text-small mb-4" id='product_description'></p>
                             <div class="row align-items-stretch mb-4">
-                            </div><button data-url="{% url "account:users_wishlist" %}" class="btn btn-link text-dark p-0" href="#"><i class="far fa-heart mr-2"></i>Add to
+                            </div><button class="btn btn-link text-dark p-0" href="#"><i class="far fa-heart mr-2"></i>Add to
                                 wish list</button>
                         </div>
                     </div>
@@ -154,6 +154,7 @@
                         <label class="custom-control-label text-small" for="customRadio4">Buy It Now</label>
                     </div>
                 </div>
+                
                 <!-- SHOP LISTING-->
                 <div class="col-lg-9 order-1 order-lg-2 mb-5 mb-lg-0">
                     <div class="row mb-3 align-items-center">
@@ -178,6 +179,7 @@
                             </ul>
                         </div>
                     </div>
+
                     <div  id="wishlist_alerts" class="alert alert-info" role="alert" hidden>
                     </div>
                     <div class="row" id='products'>
@@ -209,8 +211,8 @@
                                     <div class="product-overlay">
                                         <ul class="mb-0 list-inline">
                                         
-                                            <li class="list-inline-item m-0 p-0"><button data-pid={{p.0.id}} data-url="{% url "account:users_wishlist" %}" class="btn btn-sm btn-outline-dark add_to_wishlist">
-                                                   {%if p.1%} <i class="fa fa-heartbeat"></i>{%else%}<i class="far fa-heart"></i>{%endif%}</button></li>
+                                            <li class="list-inline-item m-0 p-0"><button data-pid={{p.0.slug}} class="btn btn-sm btn-outline-dark add_to_wishlist">
+                                                   {%if p.1%} <i class="fa fa-heart"></i>{%else%}<i class="far fa-heart"></i>{%endif%}</button></li>
                                         {% csrf_token %}
 
                                             <li class="list-inline-item mr-0"><button class="btn btn-sm btn-outline-dark" onclick="ViewProductDetails('{{p.0.slug}}')"><i
@@ -225,6 +227,8 @@
                         </div>
                         {%endfor%}
                         {%endif%}
+
+
                         <!-- PAGINATION-->
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-center justify-content-lg-end">
@@ -237,6 +241,8 @@
                                             aria-hidden="true">»</span></a></li>
                             </ul>
                         </nav>
+
+
                     </div>
                 </div>
             </div>

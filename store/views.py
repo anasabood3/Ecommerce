@@ -1,5 +1,6 @@
+from traceback import print_tb
 from django.http import  HttpResponse, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic.base import View
 from store.forms import CommentForm, ProductSearchForm
 from .models import Category, Offer, Product, ProductSpecificationValue, Comment, Rate
@@ -61,7 +62,8 @@ class CategoryProductsListView(View):
         else:
             category= get_object_or_404(Category,slug=slug_category)
             products = Product.objects.prefetch_related("product_image").filter(is_active=True, category=category)
-            products_states = [p.added_to_wishlist(request.user.id) for p in products]
+            # should be enhanced
+            products_states = [request.user.user_wishlist.filter(slug=p.slug).exists() for p in products]
             return render(request,"store/category.html",{"category": category, "products": zip(products, products_states)},)
 
 
@@ -72,19 +74,23 @@ class ProductDetails(View):
     user_comment = None
     def get(self, request, slug):
         product = get_object_or_404(Product, slug=slug, is_active=True)
+
         rate = product.rates.all().aggregate(Avg('rate_value'))['rate_value__avg']
+        
         if rate:
             product_rate=rate
         else:
             product_rate = "Still Not Rated"
 
-       
+
         comments = product.comments.filter(status=True)
         comment_form = CommentForm()
         if request.user.is_authenticated:
             product_state = product.added_to_wishlist(request.user.id)
+            print(product_state)
         else:
             product_state = False
+            product_state = request.user.user_wishlist.filter(slug=product.slug).exists()
         # ps = ProductSpecificationValue.objects.select_related('specification').filter(product_id = product.id)
 
         # get product all specifacation (Waiting to convert into django ORM)
@@ -111,19 +117,19 @@ class ProductDetails(View):
 
         if request.is_ajax:
             action = request.POST.get('action')
-           
+
             if action == 'comment':
+
                 comment_form =request.POST
-                print(request.POST)
                 form = CommentForm(comment_form)
+
                 if form.is_valid():
                     user_comment = form.save(commit=False)
                     user_comment.product = product
                     user_comment.user = request.user
-                    user_comment.user_name = (
-                        f"{request.user.first_name} {request.user.last_name}"
-                    )
                     user_comment.save()
+
+                    #return reply/commen data
                     response_data = {}
                     # result means successeded or failed...
                     response_data["result"] = True
@@ -131,19 +137,21 @@ class ProductDetails(View):
                     response_data["created"] = user_comment.publish_date.strftime(
                         "%B %d, %Y %I:%M %p"
                     )
-                    response_data["commenter"] = user_comment.user_name
-                    
+                    response_data["commenter"] = f"{request.user.first_name} {request.user.last_name}"
+
                     if user_comment.parent is None:
                         response_data["parent"] = None
-                        
+
                     else:
                         response_data["parent"] = user_comment.parent.pk
 
                     response_data["comment_id"] = user_comment.pk
+
                     return JsonResponse(response_data, status=200)
+                
             elif action=="rate":
                 rate_level = request.POST.get("rate")
-                
+
                 rate, created = Rate.objects.get_or_create(product=product,user=request.user)
                 if created:
                     new_rate = Rate(product=product,user=request.user,user_name=f"{request.user.first_name} {request.user.last_name}",rate_value=rate_level)
@@ -151,15 +159,32 @@ class ProductDetails(View):
                 else:
                    rate.rate_value = rate_level
                    rate.save()
-                
+
                 return HttpResponse("<h1> Cought </h1>")
+
+            elif action=="add_to_whishlist":
+
+                product_slug = request.POST.get("product_id")
+                product = get_object_or_404(Product, slug=product_slug)
+                customer=request.user
+
+                if customer.user_wishlist.filter(slug=product_slug).exists():
+                    customer.user_wishlist.remove(product)
+                    state=False
+                else:
+                    customer.user_wishlist.add(product)
+                    state=True
+
+                whish_list=customer.user_wishlist.count()
+
+                return JsonResponse({"length_of_wishlist": whish_list,"decrease_amount":product.regular_price,"state":state}, status=200)
 
 
 
 
 def product_search(request):
     form = ProductSearchForm()
-    # q means query 
+    # q means query
     q = ""
     results = []
     # handling suggestions
