@@ -19,9 +19,9 @@ def wishlist(request):
 
 def search_data(request):
     form = ProductSearchForm()
-    q = ''
+    query = ''
     results = []
     return {
         'search_form':form,
-        'q':q,
+        'query':query,
         'results':results}

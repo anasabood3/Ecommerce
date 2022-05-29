@@ -18,5 +18,5 @@ urlpatterns = [
     # Products of specific category
     path('shop/<slug:slug_category>/', views.CategoryProductsListView.as_view(), name='category_list'),
     # Find Product
-    path('search/',views.product_search,name='product_search')
+    path('search/',views.ProductSearch.as_view(),name='product_search')
 ]

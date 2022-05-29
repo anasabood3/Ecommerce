@@ -4,16 +4,6 @@
 <div class="container">
 
 
-  {% comment %} <!-- Search Form Section -->
-  <section class="pt-3 col-9">
-    <form class="form-inline dropdown my-2 pr-5 my-lg-0" method='get' autocomplete="off">
-      {{form.q}}
-      <ul class="dropdown-menu col-8 pl-2" role="menu" areia-labelledby="menu" id="list">
-      </ul>
-      <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
-      {% csrf_token %}
-    </form>
-  </section> {% endcomment %}
 
   <!-- Header SECTION-->
   <section class="pt-5">
@@ -33,11 +23,40 @@
   <section class="py-5">
     <header>
     </header>
-    {%for product in results%}
-    <div class="row">
-      {{product.title}}
-    </div>
-    {% endfor %}
+    
+    <ul class='list-unstyled'>
+      {%for product in results%}
+      <li class="m-3">
+       
+        <div class="card">
+          <div class="d-flex">
+            <div class="img-square-wrapper">
+              {% for image in product.product_image.all %}
+              {%if image.is_feature %}
+              <img class="img-fluid w-100" src="{{ image.image.url }}"
+                  alt="{{ image.image.alt_text }}">
+          {%endif%} 
+          {%endfor%}
+            </div>
+            <div class="card-body">
+              <a class="text-decoration-none" href="{{product.get_absolute_url}}"><h4 class="card-title">{{product.title}}</h4></a>
+              <p class="card-text">{{product.description}}</p>
+              <p class="card-text">{{product.regular_price}} <span class="text-danger">$</span></p>
+            </div>
+          </div>
+        </div>
+        
+      </li>
+      
+
+
+      
+
+
+
+      {% endfor %}
+    </ul>
+   
   </section>
 </div>
 {%endblock%}

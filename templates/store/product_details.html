@@ -5,6 +5,13 @@
 
 
 {%block content%}
+
+
+
+<link rel="stylesheet" href="{% static 'store/css/jquery.artarax.rating.star.css' %}">
+
+
+
 <section class=" my-3 border">
     {% csrf_token %}
         <div class="row mb-5">
@@ -43,23 +50,22 @@
 
                 <!-- Product Rating -->
                 <ul class="list-inline mb-2">
-                    <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                    <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                    <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                    <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                    <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
+                {% with ''|center:product_rate as range %}
+                {% for _ in range %}
+                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
+                {% endfor %}
+                
+                {% endwith %}
                 </ul>
 
-
+            
                 <!-- Product General Details -->
                 <h1>{{product.title}}</h1>
-                <p class="text-muted lead">${{product.regular_price}}</p>
                 <p class="text-small mb-4">{{product.description}}</p>
-                <p class="text-small mb-4">{{product_rate}}</p>
 
                 <!-- Product Wishlist -->
                 {% if request.user.is_authenticated %}
-                <button data-pid="{{product.slug}}" class="btn btn-outline-danger btn-sm " id="add_to_wishlist">
+                <button data-pid="{{product.slug}}" class="btn btn-outline-danger btn-sm ml-3 border-0" id="add_to_wishlist">
                     {% if product_state %}
                     <i class="fa fa-heart"></i> <span>Wishlist</span> </button>
                 {% else %}
@@ -76,9 +82,21 @@
                 
                     <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Tags:</strong><a
                             class="reset-anchor ml-2" href="#">Innovation</a></li>
+                    
+                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Price:</strong><a
+                        class="reset-anchor ml-2" href="#">{{product.regular_price}} $</a></li>
+                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Your Rating:</strong><a
+                        class="reset-anchor ml-2" href="#">{{product_rate}} </a></li>
                 
-                    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Rate The
-                            Poduct:</strong><input id="rate_input" type="text" max="5" min="0"></li>
+                    <li class="px-3 mb-1 bg-white text-muted d-flex">
+                            <div class="rating-star ">
+                                <span data-val="1"></span>
+                                <span data-val="2"></span>
+                                <span data-val="3"></span>
+                                <span data-val="4"></span>
+                                <span data-val="5"></span>
+                            </div></li>
+                    <li></li>
                 
                 </ul>
 
@@ -218,6 +236,41 @@
 
 {%block content2%}
 <script src="{% static 'store/js/comment.js' %}"></script>
+<script src="{% static 'store/js/jquery.artarax.rating.star.js' %}"></script>
+
+<script>
+    
+    $(function () {
+
+        // ---------------------------- page.load() -------------------------
+        var artaraxRatingStar = $.artaraxRatingStar({
+            onClickCallBack: onRatingStar
+        });
+
+        
+
+        function onRatingStar(rate, id) {
+            var csrf = $("input[name=csrfmiddlewaretoken]").val();
+            $.ajax({
+                url: "",
+                type: 'POST',
+                data: {
+                  rating_value:rate,
+                  csrfmiddlewaretoken: csrf,
+                  action: "rate",
+                },
+                success: function (response) {
+                },
+                // handle a non-successful response
+                error: function (xhr, errmsg, err) {
+                  alert("Error: " + err);
+                }
+              });
+        }
+
+    });
+    
+</script>
 {%endblock%}
 
 

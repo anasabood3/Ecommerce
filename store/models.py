@@ -306,15 +306,23 @@ class Rate(models.Model):
     User Rates for a Specific product
     '''
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name="rates")
-    user = models.ForeignKey(UserBase,on_delete=models.CASCADE)
+    user = models.ForeignKey(UserBase,on_delete=models.CASCADE,related_name="rates")
+
     user_name = models.CharField(max_length=30,default="Unknown")
+    
     rate_value = models.IntegerField(default=0,validators=[
             MaxValueValidator(5),
             MinValueValidator(0)
         ])
+    
     rating_date = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self):
-        return f"{self.product} Rated {self.rate_value} By{self.user}"
+        return f"{self.product} Rated {self.rate_value} By{self.user_name}"
+
+    def save(self,*args, **kwargs):
+        self.user_name = f"{self.user.first_name} {self.user.last_name}"
+        super().save(*args, **kwargs)
+    class Meta:
+        unique_together = ('product', 'user')
     

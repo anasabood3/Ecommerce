@@ -1,3 +1,4 @@
+from math import floor
 from traceback import print_tb
 from django.http import  HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -73,32 +74,45 @@ class CategoryProductsListView(View):
 class ProductDetails(View):
     user_comment = None
     def get(self, request, slug):
+        # get the current product and user
         product = get_object_or_404(Product, slug=slug, is_active=True)
+        curr_user=request.user
 
-        rate = product.rates.all().aggregate(Avg('rate_value'))['rate_value__avg']
-        
-        if rate:
-            product_rate=rate
-        else:
-            product_rate = "Still Not Rated"
+        # -------------Prepare product details to be renderend-------------
 
-
-        comments = product.comments.filter(status=True)
-        comment_form = CommentForm()
-        if request.user.is_authenticated:
-            product_state = product.added_to_wishlist(request.user.id)
-            print(product_state)
-        else:
-            product_state = False
-            product_state = request.user.user_wishlist.filter(slug=product.slug).exists()
-        # ps = ProductSpecificationValue.objects.select_related('specification').filter(product_id = product.id)
 
         # get product all specifacation (Waiting to convert into django ORM)
+        # ps = ProductSpecificationValue.objects.select_related('specification').filter(product_id = product.id)
         product_specs = ProductSpecificationValue.objects.raw(
             "select * from store_productspecification join store_productspecificationvalue on store_productspecification.id = store_productspecificationvalue.specification_id where store_productspecificationvalue.product_id = "
             + str(product.id)
             + ";"
         )
+
+        comments = product.comments.filter(status=True)
+       
+
+
+        rate = product.rates.all().aggregate(Avg('rate_value'))['rate_value__avg']
+        if rate:
+            product_rate=round(rate)
+        else:
+            product_rate = 0
+        
+
+        if curr_user.is_authenticated:
+            product_state = curr_user.user_wishlist.filter(slug=product.slug).exists()
+            product_user_rate=Rate.objects.filter(product=product,user=curr_user)
+            if product_user_rate:
+                user_rate=product_user_rate[0].rate_value
+            else:
+                user_rate="Still Not Rated"
+            
+            comment_form = CommentForm()
+        else:
+            product_state = False
+            product_user_rate="Login to Rate"
+
         return render(
             request,
             "store/product_details.html",
@@ -109,8 +123,11 @@ class ProductDetails(View):
                 "comment_form": comment_form,
                 "comments": comments,
                 "product_rate":product_rate,
+                "user_rating":user_rate,
             },
         )
+
+
 
     def post(self, request, slug):
         product = get_object_or_404(Product, slug=slug, is_active=True)
@@ -150,17 +167,11 @@ class ProductDetails(View):
                     return JsonResponse(response_data, status=200)
                 
             elif action=="rate":
-                rate_level = request.POST.get("rate")
-
-                rate, created = Rate.objects.get_or_create(product=product,user=request.user)
-                if created:
-                    new_rate = Rate(product=product,user=request.user,user_name=f"{request.user.first_name} {request.user.last_name}",rate_value=rate_level)
-                    new_rate.save()
-                else:
-                   rate.rate_value = rate_level
-                   rate.save()
-
-                return HttpResponse("<h1> Cought </h1>")
+                rate_level = request.POST.get("rating_value")
+                obj, _ = Rate.objects.get_or_create(product=product,user=request.user)
+                obj.rate_value = rate_level
+                obj.save()
+                return JsonResponse({},status=200)
 
             elif action=="add_to_whishlist":
 
@@ -182,27 +193,64 @@ class ProductDetails(View):
 
 
 
-def product_search(request):
-    form = ProductSearchForm()
-    # q means query
-    q = ""
-    results = []
-    # handling suggestions
-    if request.POST.get("action") == "post":
-        search_string = str(request.POST.get("ss"))
-        if search_string is not None:
-            search_string = Product.objects.filter(title__contains=search_string)[:3]
-            data = serializers.serialize(
-                "json", list(search_string), fields=("id", "title", "slug")
-            )
-            return JsonResponse({"search_string": data})
-    # handling search list
-    if "q" in request.GET:
-        form = ProductSearchForm(request.GET)
-        if form.is_valid():
-            q = form.cleaned_data["q"]
-            results = Product.objects.filter(title__contains=q)
 
-    return render(
-        request, "store/search.html", {"form": form, "q": q, "results": results}
+class ProductSearch(View):
+
+    def get(self,request):
+        form = ProductSearchForm()
+        query = ""
+        results = []
+        if "query" in request.GET:
+            form = ProductSearchForm(request.GET)
+            if form.is_valid():
+                query = form.cleaned_data["query"]
+                results = Product.objects.filter(title__contains=query)
+        return render(
+        request, "store/search.html", {"form": form, "query": query, "results": results}
     )
+    def post(self,request):
+        action = request.POST.get('action')
+        if request.is_ajax:
+            if action=="search":
+                search_string = str(request.POST.get("ss"))
+                if search_string is not None:
+                    print( search_string + ":search string were receivein successfully")
+                    search_string = Product.objects.filter(title__contains=search_string)[:3]
+                    data = serializers.serialize(
+                        "json", list(search_string), fields=("id", "title", "slug")
+                    )
+                    return JsonResponse({"search_string": data})
+
+
+
+
+
+
+
+
+
+
+# obselete
+
+# def product_search(request):
+    
+#     # handling suggestions
+#     if request.POST.get("action") == "post":
+#         search_string = str(request.POST.get("ss"))
+#         if search_string is not None:
+#             search_string = Product.objects.filter(title__contains=search_string)[:3]
+#             data = serializers.serialize(
+#                 "json", list(search_string), fields=("id", "title", "slug")
+#             )
+#             return JsonResponse({"search_string": data})
+    
+#     # handling search list
+#     if "query" in request.GET:
+#         form = ProductSearchForm(request.GET)
+#         if form.is_valid():
+#             query = form.cleaned_data["query"]
+#             results = Product.objects.filter(title__contains=query)
+
+#     return render(
+#         request, "store/search.html", {"form": form, "query": query, "results": results}
+#     )
